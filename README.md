@@ -1,0 +1,1 @@
+# Rarity automation script
