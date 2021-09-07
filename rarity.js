@@ -107,7 +107,7 @@ async function method1(private_key, int256_id, method_sig) {
 		tran.on('confirmation', (confirmationNumber, receipt) => {
 			console.log('confirmation: ' + confirmationNumber);
       if (confirmationNumber >= 2) {
-        return
+        process.exit(0)
       }
 		});
 		tran.on('transactionHash', hash => {
