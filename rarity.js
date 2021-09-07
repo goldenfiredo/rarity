@@ -1,7 +1,5 @@
-const Tx = require('ethereumjs-tx').Transaction
-const buffer = require('buffer')
 const Web3 = require('web3')
-const fs = require('fs')
+const utils = require('./utils')
 
 const options = {
   transactionConfirmationBlocks: 1,
@@ -70,13 +68,13 @@ async function main() {
 
     result = await contract.methods.tokenURI(summoner_id).call()
     let b64 = result.slice(result.indexOf('base64,')+7)
-    await save_png(b64, summoner_id)
+    await utils.save_svg(b64, summoner_id)
 
   } else {
     console.log('bad method name')
   }
 }
-
+/*
 async function save_png(b64, _id) {
     let data = Buffer.from(b64, 'base64').toString()
     let svg = JSON.parse(data).image.slice(JSON.parse(data).image.indexOf('base64,')+7)
@@ -85,10 +83,11 @@ async function save_png(b64, _id) {
       //console.log(err); 
     });
 }
+*/
 
 async function method1(private_key, int256_id, method_sig) {
 
-  let gas_price = 6e10
+  let gas_price = 8e10
   let account = web3.eth.accounts.privateKeyToAccount(private_key)
   let from_ = account.address
   console.log('from:' + from_)
@@ -98,7 +97,7 @@ async function method1(private_key, int256_id, method_sig) {
   
   let gas_limit = 210000
 
-  let signed_tx = sign_eth_tx(private_key, nonce, gas_limit, gas_price, from_, int256_id, method_sig)
+  let signed_tx = utils.sign_eth_tx(private_key, nonce, gas_limit, gas_price, from_, int256_id, method_sig, Rarity_contract_address)
   
   try
 	{
@@ -130,7 +129,7 @@ async function method1(private_key, int256_id, method_sig) {
 
 }
 
-
+/*
 function sign_eth_tx(private_key, nonce, gas_limit, gas_price, from_, int256_id, method_sig)
 {
   let _id = add_pre_zero(int256_id.toString(16, 'hex'))
@@ -166,5 +165,5 @@ function add_pre_zero(num)
   }
   return s+num;
 } 
-
+*/
 main()
