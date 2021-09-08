@@ -40,7 +40,7 @@ async function main() {
 
   } else if (process.argv[3] == 'adventure') {
     let summoner_id = parseInt(process.argv[4])
-    console.log('\nsummoner id:' + summoner_id)
+    console.log('\nsummoner id: ' + summoner_id)
 
     let result = await contract.methods.summoner(summoner_id).call()
     console.log(JSON.stringify(result))
@@ -77,20 +77,17 @@ async function main() {
 
 async function method1(private_key, int256_id, method_sig) {
 
-  let gas_price = 8e10
   let account = web3.eth.accounts.privateKeyToAccount(private_key)
   let from_ = account.address
-  console.log('from:' + from_)
+  console.log('your account: ' + from_)
   
   let nonce = await web3.eth.getTransactionCount(from_)
-  console.log('nonce:' + nonce)
-  
-  let gas_limit = 210000
+  console.log('nonce: ' + nonce)
 
   let _id = utils.add_pre_zero(int256_id.toString(16, 'hex'))
   let data = method_sig + _id  
 
-  let signed_tx = utils.sign_eth_tx(private_key, nonce, gas_limit, gas_price, from_, data, Rarity_contract_address)
+  let signed_tx = utils.sign_eth_tx(private_key, nonce, from_, data, Rarity_contract_address)
   
   try
 	{

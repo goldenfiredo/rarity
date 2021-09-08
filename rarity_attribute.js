@@ -31,7 +31,7 @@ async function main() {
   
   if (process.argv[3] == 'point_buy') {
     let summoner_id = parseInt(process.argv[5])
-    console.log('\nsummoner id:' + summoner_id)
+    console.log('\nsummoner id: ' + summoner_id)
     let result = await contract.methods.character_created(summoner_id).call()
     if (result == true) {
       console.log('The character has been created')
@@ -76,16 +76,13 @@ async function main() {
 
 async function method1(private_key, int256_id, _str, _dex, _const, _int, _wis, _cha, method_sig) {
 
-  let gas_price = 8e10
   let account = web3.eth.accounts.privateKeyToAccount(private_key)
   let from_ = account.address
-  console.log('from:' + from_)
+  console.log('your account: ' + from_)
   
   let nonce = await web3.eth.getTransactionCount(from_)
-  console.log('nonce:' + nonce)
+  console.log('nonce: ' + nonce)
   
-  let gas_limit = 210000
-
   let data = method_sig + utils.add_pre_zero(int256_id.toString(16, 'hex')) 
       + utils.add_pre_zero(parseInt(_str).toString(16, 'hex')) 
       + utils.add_pre_zero(parseInt(_dex).toString(16, 'hex')) 
@@ -94,7 +91,7 @@ async function method1(private_key, int256_id, _str, _dex, _const, _int, _wis, _
       + utils.add_pre_zero(parseInt(_wis).toString(16, 'hex')) 
       + utils.add_pre_zero(parseInt(_cha).toString(16, 'hex'))
 
-  let signed_tx = utils.sign_eth_tx(private_key, nonce, gas_limit, gas_price, from_, data, Rarity_attribute_contract_address)
+  let signed_tx = utils.sign_eth_tx(private_key, nonce, from_, data, Rarity_attribute_contract_address)
   
   try
 	{

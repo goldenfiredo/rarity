@@ -2,7 +2,10 @@ const Tx = require('ethereumjs-tx').Transaction
 const buffer = require('buffer')
 const fs = require('fs')
 
-function sign_eth_tx(private_key, nonce, gas_limit, gas_price, from_, data, contract_address)
+const gas_price = 8e10
+const gas_limit = 210000
+  
+function sign_eth_tx(private_key, nonce, from_, data, contract_address)
 {
   let rawTx = {
       nonce: nonce,
