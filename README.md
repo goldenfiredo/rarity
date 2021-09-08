@@ -7,3 +7,9 @@
 #### 6 手动冒险的命令是: node rarity.js 帐号私钥 adventure token_id
 #### 7 脚本也支持mint新NFT，命令是: node rarity.js 帐号私钥 summon 职业编号(1-11)
 #### * 保证账户里有足够的FTM(1个足够？) 
+
+### Rarity attribute合约批量分配属性(point_buy)
+#### a 上面第3步会同时生成 rarity_attribute.cmd和rarity_attribute.sh脚本
+#### b Linux下第一次运行时先执行chmod +x rarity_attribute.sh, 然后运行 ./rarity_attribute.sh 你的帐号私钥; Windows下直接运行 .\rarity_attribute.cmd 你的帐号私钥 
+#### c 执行以上命令即可批量分配属性[point_buy], 随机选择6个属性值, 并在svg目录下生成NFT的svg文件(合约有bug, 生成的svg文件看上去不可描述)
+#### * 每个Summoner只能分配一次属性且不可逆

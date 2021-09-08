@@ -2,11 +2,8 @@ const Tx = require('ethereumjs-tx').Transaction
 const buffer = require('buffer')
 const fs = require('fs')
 
-function sign_eth_tx(private_key, nonce, gas_limit, gas_price, from_, int256_id, method_sig, contract_address)
+function sign_eth_tx(private_key, nonce, gas_limit, gas_price, from_, data, contract_address)
 {
-  let _id = add_pre_zero(int256_id.toString(16, 'hex'))
-  let data = method_sig + _id  
-
   let rawTx = {
       nonce: nonce,
       gasLimit: '0x' + gas_limit.toString(16, 'hex'), 
@@ -39,16 +36,24 @@ function add_pre_zero(num)
 } 
 
 
-async function save_svg(b64, _id) {
+async function save_svg(b64, fn) {
   let data = Buffer.from(b64, 'base64').toString()
   let svg = JSON.parse(data).image.slice(JSON.parse(data).image.indexOf('base64,')+7)
   let binaryData = Buffer.from(svg, 'base64').toString('binary');
-  fs.writeFile('svg/' + _id + ".svg", binaryData, "binary", function(err) {
+  fs.writeFile('svg/' + fn + ".svg", binaryData, "binary", function(err) {
     //console.log(err); 
   });
 }
 
+function read_from_file(fn) {
+  let contents = fs.readFileSync(fn)
+
+  return Buffer.from(contents, 'binary').toString().split('\n')
+}
+
 module.exports = {
   sign_eth_tx,
+  add_pre_zero,
   save_svg,  
+  read_from_file,
 } 
