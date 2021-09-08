@@ -39,14 +39,27 @@ async function main() {
       return
     } 
     
+    let method_sig = web3.eth.abi.encodeFunctionSignature('point_buy(uint256,uint32,uint32,uint32,uint32,uint32,uint32)')
     let available_attributes = utils.read_from_file('ra_point_buy_inputs.txt')
     if (process.argv[4] == '-r') { //random select attributes
       let attribute = available_attributes[Math.floor(Math.random() * available_attributes.length)].split(',')
       console.log('seleted attribute: ' + attribute)
-      let method_sig = web3.eth.abi.encodeFunctionSignature('point_buy(uint256,uint32,uint32,uint32,uint32,uint32,uint32)')
       await method1(private_key, summoner_id, attribute[0], attribute[1], attribute[2], attribute[3], attribute[4], attribute[5], method_sig)
 
     } else if (process.argv[4] == '-s') {
+      let _str = process.argv[6]
+      let _dex = process.argv[7]
+      let _const = process.argv[8]
+      let _int = process.argv[9]
+      let _wis = process.argv[10]
+      let _cha = process.argv[11]
+
+      if (!check_input(available_attributes, _str, _dex, _const, _int, _wis, _cha)) {
+        console.log('bad attributes')
+        return
+      }
+
+      await method1(private_key, summoner_id, _str, _dex, _const, _int, _wis, _cha, method_sig)
 
     } else {
       console.log('bad arguments')
@@ -111,6 +124,13 @@ async function method1(private_key, int256_id, _str, _dex, _const, _int, _wis, _
 		console.log('Exception occured when waiting a response.')	
 	}
 
+}
+
+function check_input(attributes, _str, _dex, _const, _int, _wis, _cha) {
+  let value = _str + ',' + _dex + ',' + _const + ',' + _int + ',' + _wis + ',' + _cha
+  
+  if (attributes.includes(value)) return true
+  return false
 }
 
 main()

@@ -14,22 +14,19 @@ function sign_eth_tx(private_key, nonce, gas_limit, gas_price, from_, data, cont
       data: data,
   }
 
-  var tx = new Tx(rawTx, {'chain': 'ftm'});
+  let tx = new Tx(rawTx, {'chain': 'ftm'})
   
-  var privateKey_buf = Buffer.from(private_key, 'hex');
-  tx.sign(privateKey_buf);
+  let privateKey_buf = Buffer.from(private_key, 'hex')
+  tx.sign(privateKey_buf)
   
-  var serializedTx = tx.serialize().toString('hex');
-  console.log(serializedTx)
-
-  return serializedTx
+  return tx.serialize().toString('hex')
 }
 
 function add_pre_zero(num)
 {
-  var t = (num+'').length,
+  let t = (num+'').length,
   s = '';
-  for(var i=0; i<64-t; i++){
+  for(let i=0; i<64-t; i++){
     s += '0';
   }
   return s+num;
