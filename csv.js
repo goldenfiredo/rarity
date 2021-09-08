@@ -31,22 +31,17 @@ async function main() {
   fs.writeFileSync('rarity.cmd', contents)
 
   // rarity attribute contract : point_buy
-  contents = 'while true\ndo\n'
-  for (i in token_ids) {
-    contents += '\tnode rarity_attribute.js $1 point_buy -r ' + token_ids[i] + '\n'
-  }
-  contents += '\tsleep 3600\n'
-  contents += 'done\n'
-  fs.writeFileSync('rarity_attribute.sh', contents)
-
-  contents = ':loop\n'
+  contents = ''
   for (i in token_ids) {
     contents += 'node rarity_attribute.js $1 point_buy -r ' + token_ids[i] + '\n'
   }
-  contents += 'timeout /t 3600\n'
-  contents += 'goto loop\n'
-  fs.writeFileSync('rarity_attribute.cmd', contents)
+  fs.writeFileSync('rarity_attribute.sh', contents)
 
+  contents = ''
+  for (i in token_ids) {
+    contents += 'node rarity_attribute.js $1 point_buy -r ' + token_ids[i] + '\n'
+  }
+  fs.writeFileSync('rarity_attribute.cmd', contents)
 }
 
 main()
