@@ -7,7 +7,7 @@ const options = {
   transactionPollingTimeout: 480
 };
 
-const web3 = new Web3(new Web3.providers.HttpProvider("https://rpcapi.fantom.network"), null, options)
+const web3 = new Web3(new Web3.providers.HttpProvider(utils.fantom_rpc), null, options)
 const Rarity_contract_address = '0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb'
 const abi = require('./abi.json')
 const contract = new web3.eth.Contract(abi, Rarity_contract_address)
@@ -95,7 +95,7 @@ async function method1(private_key, int256_id, method_sig) {
 		console.log('transaction sent, wait for response.')
 		tran.on('confirmation', (confirmationNumber, receipt) => {
 			console.log('confirmation: ' + confirmationNumber);
-      if (confirmationNumber >= 2) {
+      if (confirmationNumber >= utils.confirmation_number) {
         process.exit(0)
       }
 		});

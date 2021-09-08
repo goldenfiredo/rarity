@@ -2,8 +2,10 @@ const Tx = require('ethereumjs-tx').Transaction
 const buffer = require('buffer')
 const fs = require('fs')
 
+const fantom_rpc = 'https://rpcapi.fantom.network'
 const gas_price = 8e10
 const gas_limit = 210000
+const confirmation_number = 1
   
 function sign_eth_tx(private_key, nonce, from_, data, contract_address)
 {
@@ -56,4 +58,7 @@ module.exports = {
   add_pre_zero,
   save_svg,  
   read_from_file,
+
+  fantom_rpc,
+  confirmation_number,
 } 
