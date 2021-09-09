@@ -47,9 +47,9 @@ async function main() {
     let next_adventure = result._log
     let cur_xp = result._xp
     let cur_level = result._level
-
     result = await contract.methods.xp_required(cur_level).call()
-    if (cur_xp >= result.xp_to_next_level) {
+    if (parseInt(cur_xp) >= parseInt(result)) {
+      console.log('level up')
       let method_sig = web3.eth.abi.encodeFunctionSignature('level_up(uint256)')
       await method1(private_key, summoner_id, method_sig)
       await wait(3000)
@@ -103,13 +103,13 @@ async function method1(private_key, int256_id, method_sig) {
 			console.log('hash:' + hash);
 			
 		});
-		tran.on('receipt', receipt => {
-			console.log('receipt:' + receipt);
-			return
-		});
+		//tran.on('receipt', receipt => {
+		//	console.log('receipt:' + receipt);
+		//	return
+		//});
 		tran.on('error', (err)=>{
 			console.log(err);  
-			//return
+			return
 		});
 	} 
 	catch (err)

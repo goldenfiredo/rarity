@@ -70,13 +70,13 @@ async function method1(private_key, int256_id, method_sig) {
 			console.log('hash:' + hash);
 			
 		});
-		tran.on('receipt', receipt => {
-			console.log('receipt:' + receipt);
-			return
-		});
+		//tran.on('receipt', receipt => {
+		//	console.log('receipt:' + receipt);
+		//	return
+		//});
 		tran.on('error', (err)=>{
 			console.log(err);  
-			//return
+			return
 		});
 	} 
 	catch (err)
