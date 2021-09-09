@@ -28,13 +28,16 @@ async function main() {
   if (process.argv[3] == 'claim') {
     let summoner_id = parseInt(process.argv[4])
     console.log('\nsummoner id: ' + summoner_id)
-    let result = await contract.methods.claimable(summoner_id).call()
-    if (result <= true) {
+    let result = await contract.methods.claimed(summoner_id).call()
+    console.log('your summoner owns ' + result + ' GOLD')
+    result = await contract.methods.claimable(summoner_id).call()
+    if (result <= 0) {
       console.log('your summoner has no GOLD to claim')
 
       return
     } 
     
+    console.log('claim')
     let method_sig = web3.eth.abi.encodeFunctionSignature('claim(uint256)')
     await method1(private_key, summoner_id, method_sig)
 
