@@ -20,9 +20,13 @@
 
 ### Rarity attribute合约批量分配属性(point_buy)
 a 上面第3步会同时生成 rarity_attribute.cmd和rarity_attribute.sh脚本
+
 b Linux下第一次运行时先执行chmod +x rarity_attribute.sh, 然后运行 ./rarity_attribute.sh 你的帐号私钥; Windows下直接运行 .\rarity_attribute.cmd 你的帐号私钥 
+
 c 执行以上命令即可批量分配属性[point_buy], 随机选择6个属性值, 并在svg目录下生成NFT的svg文件(合约有bug, 生成的svg文件看上去不可描述)
+
 d 手动分配属性有2种参数: 1) 随机选择属性：node rarity_attribute.js 帐号私钥 point_buy -r token_id 2)指定属性值: node rarity_attribute.js 帐号私钥 point_buy -s token_id 力量 敏捷 体格 智力 智慧 魅力. 合法的属性值见ra_point_buy_inputs.txt文件
+
 * 每个Summoner只能分配一次属性且不可逆
 
 ### Rarity gold合约批量领取金币(claim)
