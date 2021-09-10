@@ -4,11 +4,15 @@
 
 1 复制代码到本地
 
-  `git clone https://github.com/goldenfiredo/rarity.git
+  ```
+  git clone https://github.com/goldenfiredo/rarity.git
+  ```
 
 2 进入rarity目录，安装依赖包
 
-  `npm install
+  ```
+  npm install
+  ```
   
 3 从ftmscan.com上下载你的ERC721交易记录csv文件，拷贝到本目录下并改名为export.csv
 
