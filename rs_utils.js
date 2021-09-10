@@ -61,6 +61,22 @@ function get_available_skills(_class, level, skill_points, cur_skills) {
   let cur_points = calculate_points_for_set(_class, cur_skills)
 
   let new_skills = []
+  for (let i= 0; i < 36; i++) {
+    new_skills[i] = cur_skills[i]
+  }
+
+  let index1 = -1
+  while (true) {
+    let index = get_min_skill_index(new_skills, class_skill)
+    if (index == index1) break
+    if (cur_points + max_class_skill - new_skills[index] > skill_points) break
+    cur_points += max_class_skill - new_skills[index]
+    new_skills[index] = max_class_skill
+    
+    index1 = index
+  }
+
+  /*let new_skills = []
 
   let counter = 0
   for (let i= 0; i < 36; i++) {
@@ -81,22 +97,32 @@ function get_available_skills(_class, level, skill_points, cur_skills) {
       }
     }
   }
-
+  */
+ 
   return new_skills
+}
 
-  /*while (true) {
-    let new_skills = genarate_new_skills(class_skill, cur_skills, max_rank_class_skill(level), max_rank_cross_skill(level))
-    
-    let spent_points = calculate_points_for_set(_class, new_skills)
-    if (skill_points >= spent_points) {
-      return new_skills
+function get_min_skill_index(skills, class_skill) {
+  let index = 0
+  let min = skills[0]
+
+  for (let i = 0; i < 36; i++) {
+    if (class_skill[i]) {
+      index = i
+      min = skills[i]
+      break
     }
-
-    counter++
-    if (counter > 10000000) break
   }
   
-  return undefined*/
+  for (let i = index + 1; i < 36; i++) {
+    if (!class_skill[i]) continue
+    if (skills[i] < min) {
+      index = i
+      min = skills[i]
+    }
+  }
+
+  return index
 }
 
 function genarate_new_skills(class_skill, cur_skills, max_class_skill, max_cross_skill) {

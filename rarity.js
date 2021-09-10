@@ -1,13 +1,7 @@
 const Web3 = require('web3')
 const utils = require('./utils')
 
-const options = {
-  transactionConfirmationBlocks: 1,
-  transactionBlockTimeout: 60,
-  transactionPollingTimeout: 480
-};
-
-const web3 = new Web3(new Web3.providers.HttpProvider(utils.fantom_rpc), null, options)
+const web3 = new Web3(new Web3.providers.HttpProvider(utils.fantom_rpc), null, utils.options)
 const abi = require('./abi.json')
 const contract = new web3.eth.Contract(abi, utils.Rarity_contract_address)
 
@@ -43,17 +37,7 @@ async function main() {
 
     let result = await contract.methods.summoner(summoner_id).call()
     console.log(JSON.stringify(result))
-    //let next_adventure = result._log
-    //let cur_xp = result._xp
-    //let cur_level = result._level
-    /*result = await contract.methods.xp_required(cur_level).call()
-    if (parseInt(cur_xp) >= parseInt(result)) {
-      console.log('level up')
-      let method_sig = web3.eth.abi.encodeFunctionSignature('level_up(uint256)')
-      await method1(private_key, summoner_id, method_sig)
-      await wait(3000)
-    }*/
-
+    
     let start_date = new Date().getTime()
     console.log(new Date(start_date).toLocaleDateString() + ' ' + new Date(start_date).toLocaleTimeString())
     if (Math.floor(start_date / 1000) < result._log) {

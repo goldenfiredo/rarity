@@ -11,6 +11,12 @@ const FTM_MAIN = Common.forCustomChain(
   'petersburg'
 )
 
+const options = {
+  transactionConfirmationBlocks: 1,
+  transactionBlockTimeout: 60,
+  transactionPollingTimeout: 480
+}
+
 const fantom_rpc = 'https://rpcapi.fantom.network'
 const gas_price = 12e10
 const gas_limit = 300000
@@ -103,6 +109,7 @@ module.exports = {
   save_svg,  
   read_from_file,
 
+  options,
   fantom_rpc,
   confirmation_number,
   Rarity_contract_address,

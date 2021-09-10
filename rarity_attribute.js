@@ -1,13 +1,7 @@
 const Web3 = require('web3')
 const utils = require('./utils')
 
-const options = {
-  transactionConfirmationBlocks: 1,
-  transactionBlockTimeout: 60,
-  transactionPollingTimeout: 480
-};
-
-const web3 = new Web3(new Web3.providers.HttpProvider(utils.fantom_rpc), null, options)
+const web3 = new Web3(new Web3.providers.HttpProvider(utils.fantom_rpc), null, utils.options)
 const abi = require('./ra_abi.json')
 const contract = new web3.eth.Contract(abi, utils.Rarity_attribute_contract_address)
 
@@ -68,7 +62,7 @@ async function main() {
     }
 
     await display_ability_score(summoner_id)
-    
+
     result = await contract.methods.tokenURI(summoner_id).call()
     let b64 = result.slice(result.indexOf('base64,')+7)
     await utils.save_svg(b64, summoner_id + '_ra')

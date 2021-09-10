@@ -1,13 +1,7 @@
 const Web3 = require('web3')
 const utils = require('./utils')
 
-const options = {
-  transactionConfirmationBlocks: 1,
-  transactionBlockTimeout: 60,
-  transactionPollingTimeout: 480
-};
-
-const web3 = new Web3(new Web3.providers.HttpProvider(utils.fantom_rpc), null, options)
+const web3 = new Web3(new Web3.providers.HttpProvider(utils.fantom_rpc), null, utils.options)
 const abi = require('./rg_abi.json')
 const contract = new web3.eth.Contract(abi, utils.Rarity_gold_contract_address)
     

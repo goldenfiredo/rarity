@@ -2,13 +2,7 @@ const Web3 = require('web3')
 const utils = require('./utils')
 const rs_utils = require('./rs_utils')
 
-const options = {
-  transactionConfirmationBlocks: 1,
-  transactionBlockTimeout: 60,
-  transactionPollingTimeout: 480
-};
-
-const web3 = new Web3(new Web3.providers.HttpProvider(utils.fantom_rpc), null, options)
+const web3 = new Web3(new Web3.providers.HttpProvider(utils.fantom_rpc), null, utils.options)
 const rs_abi = require('./rs_abi.json')
 const rarity_abi = require('./abi.json')
 const ra_abi = require('./ra_abi.json')
@@ -56,7 +50,7 @@ async function main() {
       return
     }
     
-    console.log('set_skills')
+    console.log('set new skills')
     console.log(new_skills)
     let method_sig = web3.eth.abi.encodeFunctionSignature('set_skills(uint256,uint8[36])')
     await method1(private_key, summoner_id, new_skills, method_sig)
