@@ -23,4 +23,10 @@
 #### D 手动领取金币的命令是: node rarity_gold.js 帐号私钥 claim token_id
 #### * 你的Summoner升级到2级及以上才有金币可领，而且不领它也不会消失，所以只需在你*想*领的时候运行一次即可
 
+### Rarity skill合约批量设置技能(set_skills)
+#### 一 (重新)运行 node csv.js 会生成 rarity_skills.cmd和rarity_skills.sh脚本
+#### 二 Linux下第一次运行时先执行chmod +x rarity_skills.sh, 然后运行 ./rarity_skills.sh 你的帐号私钥; Windows下直接运行 .\rarity_skills.cmd 你的帐号私钥 
+#### 三 执行以上命令即可批量设置技能[set_skills]
+#### * 每个Summoner根据职业不同默认拥有36项技能中的某些技能，最少5项最多29项, 可以为summoner每一项技能设置点数。每个Summoner根据它的职业、级别、智力(intelligence)计算出一个技能点数(skill points), 新设置的技能点数不能超过这个skill points. 目前脚本用一个比较固定的算法分配点数，稍后会写一个随机的算法.
+
 ##### 对rarity的简评及如何下载csv文件参见文章 https://k.mirror.xyz/xZbanjDkmORXIOygvV30I28jo27bSsV-g66DrYlr8iY. 感谢E酱～
