@@ -36,13 +36,7 @@ async function main() {
     let result = await contract.methods.character_created(summoner_id).call()
     if (result == true) {
       console.log('The character has been created')
-      result = await contract.methods.ability_scores(summoner_id).call()
-      console.log('strength:',result.strength, ', point:', calculate_point(result.strength))
-      console.log('dexterity:',result.dexterity, ', point:', calculate_point(result.dexterity))
-      console.log('constitution:',result.constitution, ', point:', calculate_point(result.constitution))
-      console.log('intelligence:',result.intelligence, ', point:', calculate_point(result.intelligence))
-      console.log('wisdom:',result.wisdom, ', point:', calculate_point(result.wisdom))
-      console.log('charisma:',result.charisma, ', point:', calculate_point(result.charisma))
+      await display_ability_score(summoner_id)
 
       return
     } 
@@ -73,6 +67,8 @@ async function main() {
       console.log('bad arguments')
     }
 
+    await display_ability_score(summoner_id)
+    
     result = await contract.methods.tokenURI(summoner_id).call()
     let b64 = result.slice(result.indexOf('base64,')+7)
     await utils.save_svg(b64, summoner_id + '_ra')
@@ -80,6 +76,16 @@ async function main() {
   } else {
     console.log('bad method name')
   }
+}
+
+async function display_ability_score(summoner_id) {
+  result = await contract.methods.ability_scores(summoner_id).call()
+  console.log('strength:',result.strength, ', point:', calculate_point(result.strength))
+  console.log('dexterity:',result.dexterity, ', point:', calculate_point(result.dexterity))
+  console.log('constitution:',result.constitution, ', point:', calculate_point(result.constitution))
+  console.log('intelligence:',result.intelligence, ', point:', calculate_point(result.intelligence))
+  console.log('wisdom:',result.wisdom, ', point:', calculate_point(result.wisdom))
+  console.log('charisma:',result.charisma, ', point:', calculate_point(result.charisma))
 }
 
 async function method1(private_key, int256_id, _str, _dex, _const, _int, _wis, _cha, method_sig) {

@@ -1,6 +1,15 @@
 const Tx = require('ethereumjs-tx').Transaction
 const buffer = require('buffer')
 const fs = require('fs')
+const Common = require('ethereumjs-common').default
+const FTM_MAIN = Common.forCustomChain(
+  'mainnet', {
+      name: 'fantom',
+      networkId: 250, 
+      chainId: 250
+  }, 
+  'petersburg'
+)
 
 const fantom_rpc = 'https://rpcapi.fantom.network'
 const gas_price = 12e10
@@ -24,7 +33,7 @@ function sign_eth_tx(private_key, nonce, from_, data, contract_address)
       data: data,
   }
 
-  let tx = new Tx(rawTx, {'chain': 'ftm'})
+  let tx = new Tx(rawTx, {common: FTM_MAIN})
   
   let privateKey_buf = Buffer.from(private_key, 'hex')
   tx.sign(privateKey_buf)

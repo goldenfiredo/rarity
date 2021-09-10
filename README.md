@@ -1,20 +1,28 @@
 ## Rarity automation script
 
-1 复制代码 git clone https://github.com/goldenfiredo/rarity.git 到本地
+##### 脚本需在nodejs v12.16.0或以上环境下跑, 先安装好 node
 
-2 进入rarity目录，从ftmscan.com上下载你的ERC721交易记录csv文件，拷贝到本目录下并改名为export.csv
+1 复制代码到本地
 
-3 运行 node csv.js 生成批处理文件: rarity.cmd和rarity.sh，分别用于Windows和Linux
+  `git clone https://github.com/goldenfiredo/rarity.git
 
-4 Linux下先执行chmod +x rarity.sh， 然后运行 ./rarity.sh 你的帐号私钥; Windows下直接运行 .\rarity.cmd 你的帐号私钥
+2 进入rarity目录，安装依赖包
 
-5 执行以上命令即可进行批量冒险[adventure]和升级[level-up]，并在svg目录下生成NFT的svg文件, 批处理每小时运行一次。可以自行修改间隔时间(rarity.sh的sleep或rarity.cmd的timeout参数)
+  `npm install
+  
+3 从ftmscan.com上下载你的ERC721交易记录csv文件，拷贝到本目录下并改名为export.csv
 
-6 手动冒险的命令是: node rarity.js 帐号私钥 adventure token_id
+4 运行 node csv.js 生成批处理文件: rarity.cmd和rarity.sh，分别用于Windows和Linux
 
-7 脚本也支持mint新NFT，命令是: node rarity.js 帐号私钥 summon 职业编号(1-11)
+5 Linux下先执行chmod +x rarity.sh， 然后运行 ./rarity.sh 你的帐号私钥; Windows下直接运行 .\rarity.cmd 你的帐号私钥
 
-8 新mint的summoner放进批量脚本里需要重复2-3步
+6 执行以上命令即可进行批量冒险[adventure]和升级[level-up]，并在svg目录下生成NFT的svg文件, 批处理每小时运行一次。可以自行修改间隔时间(rarity.sh的sleep或rarity.cmd的timeout参数)
+
+7 手动冒险的命令是: node rarity.js 帐号私钥 adventure token_id
+
+8 脚本也支持mint新NFT，命令是: node rarity.js 帐号私钥 summon 职业编号(1-11)
+
+9 新mint的summoner放进批量脚本里需要重复2-3步
 
 * 保证账户里有足够的FTM(1个足够？) 
 
