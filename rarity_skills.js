@@ -42,21 +42,22 @@ async function main() {
       console.log('you need point_buy first')
       return
     }
-
+    
     let skill_points = rs_utils.skills_per_level(intelligence, _class, level)
+    console.log('skill points:', skill_points)
+    
     let cur_skills = rs_utils.to_int(await contract.methods.get_skills(summoner_id).call())
+    console.log(cur_skills)
     let cur_spent_points = rs_utils.calculate_points_for_set(_class, cur_skills)
-    if (Math.floor(cur_spent_points * 100 / skill_points) > 60) {
-      console.log('it is unnecessary to set skills for now')
-      return
-    }
-
+    
     let new_skills = rs_utils.get_available_skills(_class, level, skill_points, cur_skills)
-    if (new_skills == undefined) {
-      console.log('get available skills error')
+    if (rs_utils.calculate_points_for_set(_class, new_skills) == cur_spent_points) {
+      console.log('your summoner has been set higher skills, it is unnecessary to set skills now')
       return
     }
     
+    console.log('set_skills')
+    console.log(new_skills)
     let method_sig = web3.eth.abi.encodeFunctionSignature('set_skills(uint256,uint8[36])')
     await method1(private_key, summoner_id, new_skills, method_sig)
 

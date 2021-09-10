@@ -61,6 +61,7 @@ async function main() {
       return
     }
 
+    console.log('adventure')
     let method_sig = web3.eth.abi.encodeFunctionSignature('adventure(uint256)')
     await method1(private_key, summoner_id, method_sig)
     await wait(5000)

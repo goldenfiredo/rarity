@@ -11,6 +11,8 @@ const web3 = new Web3(new Web3.providers.HttpProvider(utils.fantom_rpc), null, o
 const abi = require('./ra_abi.json')
 const contract = new web3.eth.Contract(abi, utils.Rarity_attribute_contract_address)
 
+const base_point = [0, 1, 2, 3, 4, 5, 6, 8, 10, 13, 16, 20, 24, 28, 32]
+
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms))
     
 async function main() {
@@ -34,6 +36,13 @@ async function main() {
     let result = await contract.methods.character_created(summoner_id).call()
     if (result == true) {
       console.log('The character has been created')
+      result = await contract.methods.ability_scores(summoner_id).call()
+      console.log('strength:',result.strength, ', point:', calculate_point(result.strength))
+      console.log('dexterity:',result.dexterity, ', point:', calculate_point(result.dexterity))
+      console.log('constitution:',result.constitution, ', point:', calculate_point(result.constitution))
+      console.log('intelligence:',result.intelligence, ', point:', calculate_point(result.intelligence))
+      console.log('wisdom:',result.wisdom, ', point:', calculate_point(result.wisdom))
+      console.log('charisma:',result.charisma, ', point:', calculate_point(result.charisma))
 
       return
     } 
@@ -99,6 +108,11 @@ function check_input(attributes, _str, _dex, _const, _int, _wis, _cha) {
   
   if (attributes.includes(value)) return true
   return false
+}
+
+function calculate_point(score) {
+  if (score < 23) return base_point[score - 8]
+  return Math.floor((score - 8) ** 2 / 6)
 }
 
 main()

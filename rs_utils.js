@@ -57,8 +57,34 @@ function to_int(skills) {
 function get_available_skills(_class, level, skill_points, cur_skills) {
   let class_skill = class_skills[_class - 1]
   
+  let max_class_skill = max_rank_class_skill(level)
+  let cur_points = calculate_points_for_set(_class, cur_skills)
+
+  let new_skills = []
+
   let counter = 0
-  while (true) {
+  for (let i= 0; i < 36; i++) {
+    new_skills[i] = cur_skills[i]
+    if (class_skill[i]) {
+      cur_points += max_class_skill - cur_skills[i]
+      if (cur_points <= skill_points) counter++
+    }
+  }
+  
+  if (counter > 0) {
+    let counter1 = 0
+    
+    for (let i=0; i<36;i++) {
+      if (class_skill[i] && counter1 < counter) {
+        new_skills[i] = max_class_skill
+        counter1++
+      }
+    }
+  }
+
+  return new_skills
+
+  /*while (true) {
     let new_skills = genarate_new_skills(class_skill, cur_skills, max_rank_class_skill(level), max_rank_cross_skill(level))
     
     let spent_points = calculate_points_for_set(_class, new_skills)
@@ -70,14 +96,10 @@ function get_available_skills(_class, level, skill_points, cur_skills) {
     if (counter > 10000000) break
   }
   
-  return undefined
+  return undefined*/
 }
 
 function genarate_new_skills(class_skill, cur_skills, max_class_skill, max_cross_skill) {
-  //console.log(class_skill)
-  //console.log(max_class_skill)
-  //console.log(max_cross_skill)
-
   let result = []
   for (let i = 0; i < 36; i++) {
     if (class_skill[i]) 
