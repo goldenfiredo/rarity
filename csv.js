@@ -57,6 +57,19 @@ async function main() {
     contents += 'node rarity_gold.js %1 claim ' + token_ids[i] + '\n'
   }
   fs.writeFileSync('rarity_gold.cmd', contents)
+
+  // rarity skills contract : set_skills
+  contents = ''
+  for (i in token_ids) {
+    contents += 'node rarity_skills.js $1 set_skills ' + token_ids[i] + '\n'
+  }
+  fs.writeFileSync('rarity_skills.sh', contents)
+
+  contents = ''
+  for (i in token_ids) {
+    contents += 'node rarity_skills.js %1 set_skills ' + token_ids[i] + '\n'
+  }
+  fs.writeFileSync('rarity_skills.cmd', contents)
 }
 
 main()

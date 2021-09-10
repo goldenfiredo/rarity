@@ -8,9 +8,8 @@ const options = {
 };
 
 const web3 = new Web3(new Web3.providers.HttpProvider(utils.fantom_rpc), null, options)
-const Rarity_attribute_contract_address = '0xB5F5AF1087A8DA62A23b08C00C6ec9af21F397a1'
 const abi = require('./ra_abi.json')
-const contract = new web3.eth.Contract(abi, Rarity_attribute_contract_address)
+const contract = new web3.eth.Contract(abi, utils.Rarity_attribute_contract_address)
 
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms))
     
@@ -91,36 +90,8 @@ async function method1(private_key, int256_id, _str, _dex, _const, _int, _wis, _
       + utils.add_pre_zero(parseInt(_wis).toString(16, 'hex')) 
       + utils.add_pre_zero(parseInt(_cha).toString(16, 'hex'))
 
-  let signed_tx = utils.sign_eth_tx(private_key, nonce, from_, data, Rarity_attribute_contract_address)
-  
-  try
-	{
-		var tran = web3.eth.sendSignedTransaction('0x' + signed_tx);
-		console.log('transaction sent, wait for response.')
-		tran.on('confirmation', (confirmationNumber, receipt) => {
-			console.log('confirmation: ' + confirmationNumber);
-      if (confirmationNumber >= utils.confirmation_number) {
-        process.exit(0)
-      }
-		});
-		tran.on('transactionHash', hash => {
-			console.log('hash:' + hash);
-			
-		});
-		//tran.on('receipt', receipt => {
-		//	console.log('receipt:' + receipt);
-		//	return
-		//});
-		tran.on('error', (err)=>{
-			console.log(err);  
-			return
-		});
-	} 
-	catch (err)
-	{
-		console.log('Exception occured when waiting a response.')	
-	}
-
+  let signed_tx = utils.sign_eth_tx(private_key, nonce, from_, data, utils.Rarity_attribute_contract_address)
+  utils.send_signed_transaction(web3, signed_tx)
 }
 
 function check_input(attributes, _str, _dex, _const, _int, _wis, _cha) {

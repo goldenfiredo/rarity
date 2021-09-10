@@ -8,9 +8,8 @@ const options = {
 };
 
 const web3 = new Web3(new Web3.providers.HttpProvider(utils.fantom_rpc), null, options)
-const Rarity_gold_contract_address = '0x2069B76Afe6b734Fb65D1d099E7ec64ee9CC76B2'
 const abi = require('./rg_abi.json')
-const contract = new web3.eth.Contract(abi, Rarity_gold_contract_address)
+const contract = new web3.eth.Contract(abi, utils.Rarity_gold_contract_address)
     
 async function main() {
   
@@ -28,8 +27,8 @@ async function main() {
   if (process.argv[3] == 'claim') {
     let summoner_id = parseInt(process.argv[4])
     console.log('\nsummoner id: ' + summoner_id)
-    let result = await contract.methods.claimed(summoner_id).call()
-    console.log('your summoner owns ' + result + ' GOLD')
+    let result = await contract.methods.balanceOf(summoner_id).call()
+    console.log('your summoner owns ' + result/1e18 + ' GOLD')
     result = await contract.methods.claimable(summoner_id).call()
     if (result <= 0) {
       console.log('your summoner has no GOLD to claim')
@@ -57,36 +56,8 @@ async function method1(private_key, int256_id, method_sig) {
   
   let data = method_sig + utils.add_pre_zero(int256_id.toString(16, 'hex')) 
 
-  let signed_tx = utils.sign_eth_tx(private_key, nonce, from_, data, Rarity_gold_contract_address)
-  
-  try
-	{
-		var tran = web3.eth.sendSignedTransaction('0x' + signed_tx);
-		console.log('transaction sent, wait for response.')
-		tran.on('confirmation', (confirmationNumber, receipt) => {
-			console.log('confirmation: ' + confirmationNumber);
-      if (confirmationNumber >= utils.confirmation_number) {
-        process.exit(0)
-      }
-		});
-		tran.on('transactionHash', hash => {
-			console.log('hash:' + hash);
-			
-		});
-		//tran.on('receipt', receipt => {
-		//	console.log('receipt:' + receipt);
-		//	return
-		//});
-		tran.on('error', (err)=>{
-			console.log(err);  
-			return
-		});
-	} 
-	catch (err)
-	{
-		console.log('Exception occured when waiting a response.')	
-	}
-
+  let signed_tx = utils.sign_eth_tx(private_key, nonce, from_, data, utils.Rarity_gold_contract_address)
+  utils.send_signed_transaction(web3, signed_tx)
 }
 
 main()

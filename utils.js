@@ -3,10 +3,15 @@ const buffer = require('buffer')
 const fs = require('fs')
 
 const fantom_rpc = 'https://rpcapi.fantom.network'
-const gas_price = 8e10
-const gas_limit = 210000
+const gas_price = 12e10
+const gas_limit = 300000
 const confirmation_number = 1
-  
+
+const Rarity_contract_address = '0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb'
+const Rarity_attribute_contract_address = '0xB5F5AF1087A8DA62A23b08C00C6ec9af21F397a1'
+const Rarity_gold_contract_address = '0x2069B76Afe6b734Fb65D1d099E7ec64ee9CC76B2'
+const Rarity_skills_contract_address = '0x6292f3fB422e393342f257857e744d43b1Ae7e70'
+
 function sign_eth_tx(private_key, nonce, from_, data, contract_address)
 {
   let rawTx = {
@@ -35,8 +40,37 @@ function add_pre_zero(num)
     s += '0';
   }
   return s+num;
-} 
+}
 
+function send_signed_transaction(web3, signed_tx) {
+  try
+	{
+		var tran = web3.eth.sendSignedTransaction('0x' + signed_tx);
+		console.log('transaction sent, wait for response.')
+		tran.on('confirmation', (confirmationNumber, receipt) => {
+			console.log('confirmation: ' + confirmationNumber);
+      if (confirmationNumber >= confirmation_number) {
+        process.exit(0)
+      }
+		});
+		tran.on('transactionHash', hash => {
+			console.log('hash:' + hash);
+			
+		});
+		//tran.on('receipt', receipt => {
+		//	console.log('receipt:' + receipt);
+		//	return
+		//});
+		tran.on('error', (err)=>{
+			console.log(err);  
+			return
+		});
+	} 
+	catch (err)
+	{
+		console.log('Exception occured when waiting a response.')	
+	}
+}
 
 async function save_svg(b64, fn) {
   let data = Buffer.from(b64, 'base64').toString()
@@ -56,9 +90,14 @@ function read_from_file(fn) {
 module.exports = {
   sign_eth_tx,
   add_pre_zero,
+  send_signed_transaction,
   save_svg,  
   read_from_file,
 
   fantom_rpc,
   confirmation_number,
+  Rarity_contract_address,
+  Rarity_attribute_contract_address,
+  Rarity_gold_contract_address,
+  Rarity_skills_contract_address,
 } 
