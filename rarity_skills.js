@@ -3,9 +3,9 @@ const utils = require('./utils')
 const rs_utils = require('./rs_utils')
 
 const web3 = new Web3(new Web3.providers.HttpProvider(utils.fantom_rpc), null, utils.options)
-const rs_abi = require('./rs_abi.json')
-const rarity_abi = require('./abi.json')
-const ra_abi = require('./ra_abi.json')
+const rs_abi = require('./abi/rs_abi.json')
+const rarity_abi = require('./abi/abi.json')
+const ra_abi = require('./abi/ra_abi.json')
 const contract = new web3.eth.Contract(rs_abi, utils.Rarity_skills_contract_address)
 const rarity_contract = new web3.eth.Contract(rarity_abi, utils.Rarity_contract_address)
 const rarity_attribute_contract = new web3.eth.Contract(ra_abi, utils.Rarity_attribute_contract_address)
@@ -46,7 +46,7 @@ async function main() {
     
     let new_skills = rs_utils.get_available_skills(_class, level, skill_points, cur_skills)
     if (rs_utils.calculate_points_for_set(_class, new_skills) == cur_spent_points) {
-      console.log('your summoner has been set higher skills, it is unnecessary to set skills now')
+      console.log('your summoner\'s skill has been set, set them later')
       return
     }
     

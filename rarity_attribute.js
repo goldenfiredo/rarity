@@ -2,7 +2,7 @@ const Web3 = require('web3')
 const utils = require('./utils')
 
 const web3 = new Web3(new Web3.providers.HttpProvider(utils.fantom_rpc), null, utils.options)
-const abi = require('./ra_abi.json')
+const abi = require('./abi/ra_abi.json')
 const contract = new web3.eth.Contract(abi, utils.Rarity_attribute_contract_address)
 
 const base_point = [0, 1, 2, 3, 4, 5, 6, 8, 10, 13, 16, 20, 24, 28, 32]
