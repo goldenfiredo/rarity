@@ -18,7 +18,7 @@ const options = {
 }
 
 const fantom_rpc = 'https://rpcapi.fantom.network'
-const gas_price = 12e10
+const gas_price = 20e10
 const gas_limit = 300000
 const confirmation_number = 1
 
@@ -26,6 +26,7 @@ const Rarity_contract_address = '0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb'
 const Rarity_attribute_contract_address = '0xB5F5AF1087A8DA62A23b08C00C6ec9af21F397a1'
 const Rarity_gold_contract_address = '0x2069B76Afe6b734Fb65D1d099E7ec64ee9CC76B2'
 const Rarity_skills_contract_address = '0x6292f3fB422e393342f257857e744d43b1Ae7e70'
+const Rarity_craft_contract_address = '0x2A0F1cB17680161cF255348dDFDeE94ea8Ca196A'
 
 function sign_eth_tx(private_key, nonce, from_, data, contract_address)
 {
@@ -116,4 +117,5 @@ module.exports = {
   Rarity_attribute_contract_address,
   Rarity_gold_contract_address,
   Rarity_skills_contract_address,
+  Rarity_craft_contract_address,
 } 

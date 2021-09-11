@@ -33,7 +33,7 @@ async function main() {
     result = await rarity_attribute_contract.methods.ability_scores(summoner_id).call()
     let intelligence = parseInt(result.intelligence)
     if (intelligence == 0) {
-      console.log('you need point_buy first')
+      console.log('you need to create character first')
       return
     }
     

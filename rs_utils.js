@@ -19,7 +19,7 @@ function skills_per_level(intelligence, _class, level) {
 }
 
 function modifier_for_intelligence(intelligence) {
-  if (intelligence == 9) return - 1
+  if (intelligence == 9) return -1
   return Math.floor((intelligence - 10) / 2)
 }
 
@@ -98,7 +98,7 @@ function get_available_skills(_class, level, skill_points, cur_skills) {
     }
   }
   */
- 
+
   return new_skills
 }
 

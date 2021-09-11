@@ -115,4 +115,13 @@ C 手动领取金币:
 
 * 每个Summoner根据职业不同默认拥有36项技能中的某些技能，最少5项最多29项, 可以为summoner每一项技能设置点数。每个Summoner根据它的职业、级别、智力(intelligence)计算出一个技能点数(skill points), 新设置的技能总点数不能超过这个skill points. 目前代码用比较固定的算法分配点数，稍后会写一个随机的算法.
 
+### Rarity craft合约批量地牢冒险(adventure)
+地牢冒险(打副本？)已集成到每日的summoner冒险中, 新拉一下代码跑rarity.sh或rarity.cmd即可.
+
+手动地牢冒险:
+
+```
+node rarity_craft1.js 帐号私钥 adventure token_id
+```
+
 ##### 对rarity的简评及如何下载csv文件参见文章 https://k.mirror.xyz/xZbanjDkmORXIOygvV30I28jo27bSsV-g66DrYlr8iY. 感谢E酱～
