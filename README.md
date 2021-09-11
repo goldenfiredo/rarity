@@ -1,5 +1,7 @@
 ## Rarity automation script
 
+For English README click https://github.com/goldenfiredo/rarity/blob/master/README_en.md
+ 
 ##### 脚本需在nodejs v12.16.0或以上环境下跑, 先安装好 node
 
 1 复制代码到本地
