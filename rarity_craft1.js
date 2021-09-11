@@ -41,7 +41,12 @@ async function main() {
       console.log('you need point_buy first')
       return
     }
-    
+
+    console.log('health:',rc_utils.health_by_class_and_level(_class, level, constitution))
+    console.log('damage:',rc_utils.damage(strength))
+    console.log('armor class:',rc_utils.armor_class(dexterity))
+    console.log('attack bonus:',rc_utils.attack_bonus(_class, strength, level))
+
     let rewards = rc_utils.scout(_class, level, strength, dexterity, constitution)
     console.log('rewards:', rewards)
     if (rewards <= 0) {

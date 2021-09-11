@@ -43,11 +43,11 @@ async function main() {
     let result = await contract.methods.summoner(summoner_id).call()
     console.log(JSON.stringify(result))
     let next_adventure = result._log
-    let cur_xp = result._xp
-    let cur_level = result._level
+    let xp = result._xp
+    let level = result._level
     let _class = parseInt(result._class)
-    result = await contract.methods.xp_required(cur_level).call()
-    if (parseInt(cur_xp) >= parseInt(result)) {
+    result = await contract.methods.xp_required(level).call()
+    if (parseInt(xp) >= parseInt(result)) {
       console.log('level up')
       let method_sig = web3.eth.abi.encodeFunctionSignature('level_up(uint256)')
       await method1(private_key, summoner_id, method_sig, utils.Rarity_contract_address)
@@ -70,10 +70,10 @@ async function main() {
       await utils.save_svg(b64, summoner_id)
 
       result = await contract.methods.summoner(summoner_id).call()
-      cur_xp = result._xp
-      cur_level = result._level
-      result = await contract.methods.xp_required(cur_level).call()
-      if (parseInt(cur_xp) >= parseInt(result)) {
+      xp = result._xp
+      level = result._level
+      result = await contract.methods.xp_required(level).call()
+      if (parseInt(xp) >= parseInt(result)) {
         console.log('level up')
         let method_sig = web3.eth.abi.encodeFunctionSignature('level_up(uint256)')
         await method1(private_key, summoner_id, method_sig, utils.Rarity_contract_address)
@@ -93,7 +93,12 @@ async function main() {
       return
     }
     
-    let rewards = rc_utils.scout(_class, cur_level, strength, dexterity, constitution)
+    console.log('health:',rc_utils.health_by_class_and_level(_class, level, constitution))
+    console.log('damage:',rc_utils.damage(strength))
+    console.log('armor class:',rc_utils.armor_class(dexterity))
+    console.log('attack bonus:',rc_utils.attack_bonus(_class, strength, level))
+
+    let rewards = rc_utils.scout(_class, level, strength, dexterity, constitution)
     console.log('rewards:', rewards)
     if (rewards <= 0) {
       console.log('rewards for attacking is 0, don\'t attack dungeon')

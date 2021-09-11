@@ -21,7 +21,7 @@ function health_by_class_and_level(_class, level, _const) {
 }
 
 function base_attack_bonus_by_class_and_level(_class, level) {
-  return Math.floor(level * base_attack_bonus_by_class[_class - 1]) / 4
+  return Math.floor(level * base_attack_bonus_by_class[_class - 1] / 4)
 }
 
 function attack_bonus(_class, _str, level) {
@@ -68,4 +68,8 @@ function scout(_class, level, _str, _dex, _const) {
 
 module.exports = {
   scout,
+  health_by_class_and_level,
+  damage,
+  armor_class,
+  attack_bonus,
 }
