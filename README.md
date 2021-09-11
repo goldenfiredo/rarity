@@ -1,7 +1,7 @@
 ## Rarity automation script
 
 For English README click https://github.com/goldenfiredo/rarity/blob/master/README_en.md
- 
+
 ##### 脚本需在nodejs v12.16.0或以上环境下跑, 先安装好 node
 
 1 复制代码到本地
@@ -19,7 +19,13 @@ For English README click https://github.com/goldenfiredo/rarity/blob/master/READ
   
 3 从ftmscan.com上下载你的ERC721交易记录csv文件，拷贝到本目录下并改名为export.csv
 
-4 运行 node csv.js 生成批处理文件: rarity.cmd和rarity.sh，分别用于Windows和Linux
+4 运行 
+
+  ```
+  node csv.js 帐号地址
+  ```
+  
+  生成批处理文件: rarity.cmd和rarity.sh，分别用于Windows和Linux. 参数 *帐号地址* 用于从批处理文件中剔除转出(transfer)的token_id 
 
 5 Linux下先执行chmod +x rarity.sh， 然后运行 ./rarity.sh 你的帐号私钥; Windows下直接运行 .\rarity.cmd 你的帐号私钥
 

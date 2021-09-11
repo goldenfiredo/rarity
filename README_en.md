@@ -20,10 +20,10 @@
 4. Run this command
 
   ```
-  node csv.js
+  node csv.js your_account_address
   ```
   
-  to generate batch files with extension .cmd and .sh, respectively for Windows and Linux
+  to generate batch files with extension .cmd and .sh, respectively for Windows and Linux.
 
 5. Run this command
 
