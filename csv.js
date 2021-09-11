@@ -9,7 +9,8 @@ async function main() {
     let item = f[i]
     if (item.TokenSymbol == 'RM') {
       console.log(item.TokenId)
-      token_ids.push(item.TokenId)
+      if (!token_ids.includes(item.TokenId))
+        token_ids.push(item.TokenId)
     }
   }
   fs.writeFileSync('summon_id.txt', token_ids.join('\n'))

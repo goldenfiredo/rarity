@@ -28,7 +28,7 @@ async function main() {
   
   if (process.argv[3] == 'summon') {
     let class_id = parseInt(process.argv[4])
-    if (class_id < 0 || class_id > 11) {
+    if (isNaN(class_id) || class_id < 1 || class_id > 11) {
       console.log('bad class_id')
       return
     }

@@ -61,8 +61,6 @@ async function main() {
       console.log('bad arguments')
     }
 
-    await display_ability_score(summoner_id)
-
     result = await contract.methods.tokenURI(summoner_id).call()
     let b64 = result.slice(result.indexOf('base64,')+7)
     await utils.save_svg(b64, summoner_id + '_ra')
