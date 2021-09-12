@@ -1,0 +1,11 @@
+node rarity.js %1 summon 1
+node rarity.js %1 summon 2
+node rarity.js %1 summon 3
+node rarity.js %1 summon 4
+node rarity.js %1 summon 5
+node rarity.js %1 summon 6
+node rarity.js %1 summon 7
+node rarity.js %1 summon 8
+node rarity.js %1 summon 9
+node rarity.js %1 summon 10
+node rarity.js %1 summon 11

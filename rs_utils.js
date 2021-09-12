@@ -69,9 +69,10 @@ function get_available_skills(_class, level, skill_points, cur_skills) {
   while (true) {
     let index = get_min_skill_index(new_skills, class_skill)
     if (index == index1) break
-    if (cur_points + max_class_skill - new_skills[index] > skill_points) break
-    cur_points += max_class_skill - new_skills[index]
-    new_skills[index] = max_class_skill
+    let r = Math.floor(Math.random() * (max_class_skill - new_skills[index])) + 1
+    if (cur_points + r > skill_points) break
+    cur_points += r
+    new_skills[index] += r
     
     index1 = index
   }
