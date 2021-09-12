@@ -22,28 +22,38 @@ For English README click https://github.com/goldenfiredo/rarity/blob/master/READ
 4 运行 
 
   ```
-  node csv.js 帐号地址
+  node csv.js 你的帐号地址
   ```
   
-  生成批处理文件: rarity.cmd和rarity.sh，分别用于Windows和Linux. 参数 *帐号地址* 用于从批处理文件中剔除转出(transfer)的token_id 
+  生成批处理文件: rarity.cmd和rarity.sh，分别用于Windows和Linux. 参数 *你的帐号地址* 用于从批处理文件中剔除转出(transfer)的token_id 
 
-5 Linux下先执行chmod +x rarity.sh， 然后运行 ./rarity.sh 你的帐号私钥; Windows下直接运行 .\rarity.cmd 你的帐号私钥
+5 Linux下先执行chmod +x rarity.sh， 然后运行 
 
-6 执行以上命令即可进行批量冒险[adventure]和升级[level-up]，并在svg目录下生成NFT的svg文件, 批处理每小时运行一次。可以自行修改间隔时间(rarity.sh的sleep或rarity.cmd的timeout参数)
+  ```
+  ./rarity.sh 你的帐号私钥
+  ```
+  
+  Windows下直接运行 
+  
+  ```
+  .\rarity.cmd 你的帐号私钥
+  ```
 
-7 手动冒险: 
+  执行以上命令即可进行批量冒险[adventure]和升级[level-up]，并在svg目录下生成NFT的svg文件, 批处理每小时运行一次。可以自行修改间隔时间(rarity.sh的sleep或rarity.cmd的timeout参数)
+
+6 手动冒险: 
   
   ```
   node rarity.js 帐号私钥 adventure token_id
   ```
 
-8 脚本也支持mint新NFT[summon]: 
+7 脚本也支持mint新NFT[summon]: 
 
   ```
   node rarity.js 帐号私钥 summon 职业编号(1-11)
   ```
 
-9 新mint的summoner放进批量脚本里需要重复3-4步
+8 新mint的summoner放进批量脚本里需要重复3-4步
 
 * 保证账户里有足够的FTM(1个足够？) 
 
@@ -134,3 +144,7 @@ node rarity_craft1.js 帐号私钥 adventure token_id
 ```
 
 ##### 对rarity的简评及如何下载csv文件参见文章 https://k.mirror.xyz/xZbanjDkmORXIOygvV30I28jo27bSsV-g66DrYlr8iY. 感谢E酱～
+
+##### rarity交易市场 https://www.raritysea.io/
+
+Follow me @ https://twitter.com/goldenfiredo
