@@ -79,13 +79,26 @@ function send_signed_transaction(web3, signed_tx) {
 		//});
 		tran.on('error', (err)=>{
 			console.log(err);  
-			return
+			process.exit(0)
 		});
 	} 
 	catch (err)
 	{
 		console.log('Exception occured when waiting a response.')	
 	}
+}
+
+async function sign_and_send_transaction(web3, private_key, data, contract_address) {
+
+  let account = web3.eth.accounts.privateKeyToAccount(private_key)
+  let from_ = account.address
+  console.log('your account: ' + from_)
+  
+  let nonce = await web3.eth.getTransactionCount(from_)
+  console.log('nonce: ' + nonce)
+
+  let signed_tx = sign_eth_tx(private_key, nonce, from_, data, contract_address)
+  send_signed_transaction(web3, signed_tx)
 }
 
 async function save_svg(b64, fn) {
@@ -104,9 +117,8 @@ function read_from_file(fn) {
 }
 
 module.exports = {
-  sign_eth_tx,
   add_pre_zero,
-  send_signed_transaction,
+  sign_and_send_transaction,
   save_svg,  
   read_from_file,
 

@@ -50,32 +50,18 @@ async function main() {
       return
     }
     
-    console.log('set new skills')
+    console.log('- set new skills')
     console.log(new_skills)
     let method_sig = web3.eth.abi.encodeFunctionSignature('set_skills(uint256,uint8[36])')
-    await method1(private_key, summoner_id, new_skills, method_sig)
+    let data = method_sig + utils.add_pre_zero(summoner_id.toString(16, 'hex')) 
+    for (let i = 0; i < 36; i++) {
+      data += utils.add_pre_zero(new_skills[i].toString(16, 'hex')) 
+    }
+    await utils.sign_and_send_transaction(web3, private_key, data, utils.Rarity_skills_contract_address)
 
   } else {
     console.log('bad method name')
   }
-}
-
-async function method1(private_key, int256_id, new_skills, method_sig) {
-
-  let account = web3.eth.accounts.privateKeyToAccount(private_key)
-  let from_ = account.address
-  console.log('your account: ' + from_)
-  
-  let nonce = await web3.eth.getTransactionCount(from_)
-  console.log('nonce: ' + nonce)
-  
-  let data = method_sig + utils.add_pre_zero(int256_id.toString(16, 'hex')) 
-  for (let i = 0; i < 36; i++) {
-    data += utils.add_pre_zero(new_skills[i].toString(16, 'hex')) 
-  }
-
-  let signed_tx = utils.sign_eth_tx(private_key, nonce, from_, data, utils.Rarity_skills_contract_address)
-  utils.send_signed_transaction(web3, signed_tx)
 }
 
 main()

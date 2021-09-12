@@ -33,8 +33,10 @@ async function main() {
       return
     }
 
+    console.log('- summon')
     let method_sig = web3.eth.abi.encodeFunctionSignature('summon(uint256)')
-    await method1(private_key, class_id, method_sig, utils.Rarity_contract_address)
+    let data = method_sig + utils.add_pre_zero(class_id.toString(16, 'hex'))
+    await utils.sign_and_send_transaction(web3, private_key, data, utils.Rarity_contract_address)
 
   } else if (process.argv[3] == 'adventure') {
     let summoner_id = parseInt(process.argv[4])
@@ -46,12 +48,35 @@ async function main() {
     let xp = result._xp
     let level = result._level
     let _class = parseInt(result._class)
+    if (_class == 0) {
+      console.log('call summoner error')
+      return
+    }
     result = await contract.methods.xp_required(level).call()
     if (parseInt(xp) >= parseInt(result)) {
-      console.log('level up')
+      console.log('- level up')
       let method_sig = web3.eth.abi.encodeFunctionSignature('level_up(uint256)')
-      await method1(private_key, summoner_id, method_sig, utils.Rarity_contract_address)
+      let data = method_sig + utils.add_pre_zero(summoner_id.toString(16, 'hex'))
+      await utils.sign_and_send_transaction(web3, private_key, data, utils.Rarity_contract_address)
       await wait(3000)
+    }
+
+    result = await rarity_attribute_contract.methods.character_created(summoner_id).call()
+    if (result == false) {
+      let method_sig = web3.eth.abi.encodeFunctionSignature('point_buy(uint256,uint32,uint32,uint32,uint32,uint32,uint32)')
+      console.log('- buy point')
+      let available_attributes = utils.read_from_file('ra_point_buy_inputs.txt')
+      let attribute = available_attributes[Math.floor(Math.random() * available_attributes.length)].split(',')
+      console.log('seleted attribute: ' + attribute)
+      let data = method_sig + utils.add_pre_zero(summoner_id.toString(16, 'hex')) 
+        + utils.add_pre_zero(parseInt(attribute[0]).toString(16, 'hex')) 
+        + utils.add_pre_zero(parseInt(attribute[1]).toString(16, 'hex')) 
+        + utils.add_pre_zero(parseInt(attribute[2]).toString(16, 'hex'))
+        + utils.add_pre_zero(parseInt(attribute[3]).toString(16, 'hex')) 
+        + utils.add_pre_zero(parseInt(attribute[4]).toString(16, 'hex')) 
+        + utils.add_pre_zero(parseInt(attribute[5]).toString(16, 'hex'))
+      await utils.sign_and_send_transaction(web3, private_key, data, utils.Rarity_attribute_contract_address)
+      await wait(5000)
     }
 
     let start_date = new Date().getTime()
@@ -60,9 +85,10 @@ async function main() {
       console.log('wait ' + (next_adventure - Math.floor(start_date / 1000)) + ' seconds for next adventure')
     } else {
 
-      console.log('adventure')
+      console.log('- adventure')
       let method_sig = web3.eth.abi.encodeFunctionSignature('adventure(uint256)')
-      await method1(private_key, summoner_id, method_sig, utils.Rarity_contract_address)
+      let data = method_sig + utils.add_pre_zero(summoner_id.toString(16, 'hex'))
+      await utils.sign_and_send_transaction(web3, private_key, data, utils.Rarity_contract_address)
       await wait(5000)
 
       result = await contract.methods.tokenURI(summoner_id).call()
@@ -74,10 +100,11 @@ async function main() {
       level = result._level
       result = await contract.methods.xp_required(level).call()
       if (parseInt(xp) >= parseInt(result)) {
-        console.log('level up')
+        console.log('- level up')
         let method_sig = web3.eth.abi.encodeFunctionSignature('level_up(uint256)')
-        await method1(private_key, summoner_id, method_sig, utils.Rarity_contract_address)
-        await wait(3000)
+        let data = method_sig + utils.add_pre_zero(summoner_id.toString(16, 'hex'))
+        await utils.sign_and_send_transaction(web3, private_key, data, utils.Rarity_contract_address)
+        await wait(5000)
       }
     }
 
@@ -112,29 +139,14 @@ async function main() {
       return
     }
 
-    console.log('craft adventure')
+    console.log('- craft adventure')
     let method_sig = web3.eth.abi.encodeFunctionSignature('adventure(uint256)')
-    await method1(private_key, summoner_id, method_sig, utils.Rarity_craft_contract_address)
-
+    let data = method_sig + utils.add_pre_zero(summoner_id.toString(16, 'hex'))
+    await utils.sign_and_send_transaction(web3, private_key, data, utils.Rarity_craft_contract_address)
+    await wait(5000)
   } else {
     console.log('bad method name')
   }
-}
-
-async function method1(private_key, int256_id, method_sig, contract_address) {
-
-  let account = web3.eth.accounts.privateKeyToAccount(private_key)
-  let from_ = account.address
-  console.log('your account: ' + from_)
-  
-  let nonce = await web3.eth.getTransactionCount(from_)
-  console.log('nonce: ' + nonce)
-
-  let _id = utils.add_pre_zero(int256_id.toString(16, 'hex'))
-  let data = method_sig + _id  
-
-  let signed_tx = utils.sign_eth_tx(private_key, nonce, from_, data, contract_address)
-  utils.send_signed_transaction(web3, signed_tx)
 }
 
 main()

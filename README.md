@@ -57,7 +57,7 @@ For English README click https://github.com/goldenfiredo/rarity/blob/master/READ
 
 * 保证账户里有足够的FTM(1个足够？) 
 
-### Rarity attribute合约批量分配属性(point_buy)
+### Rarity attribute合约 批量分配属性(point_buy)
 a 上面第3步会同时生成 rarity_attribute.cmd和rarity_attribute.sh脚本
 
 b Linux下第一次运行时先执行chmod +x rarity_attribute.sh, 然后运行 
@@ -90,7 +90,7 @@ d 手动分配属性有2种参数: 1) 随机选择属性：
 
 * 每个Summoner只能分配一次属性且不可逆
 
-### Rarity gold合约批量领取金币(claim)
+### Rarity gold合约 批量领取金币(claim)
 A (重新)运行 node csv.js 会生成 rarity_gold.cmd和rarity_gold.sh脚本
 
 B Linux下第一次运行时先执行chmod +x rarity_gold.sh, 然后运行 
@@ -115,7 +115,7 @@ C 手动领取金币:
 
 * 你的Summoner升级到2级及以上才有金币可领，而且不领它也不会消失，所以只需在你*想*领的时候运行一次即可
 
-### Rarity skill合约批量设置技能(set_skills)
+### Rarity skill合约 批量设置技能(set_skills)
 一 (重新)运行 node csv.js 会生成 rarity_skills.cmd和rarity_skills.sh脚本
 
 二 Linux下第一次运行时先执行chmod +x rarity_skills.sh, 然后运行 
@@ -134,7 +134,7 @@ C 手动领取金币:
 
 * 每个Summoner根据职业不同默认拥有36项技能中的某些技能，最少5项最多29项, 可以为summoner每一项技能设置点数。每个Summoner根据它的职业、级别、智力(intelligence)计算出一个技能点数(skill points), 新设置的技能总点数不能超过这个skill points. 目前代码用比较固定的算法分配点数，稍后会写一个随机的算法.
 
-### Rarity craft合约批量地牢冒险(adventure)
+### Rarity craft合约 批量地牢冒险(adventure)
 地牢冒险(打副本？)已集成到每日的summoner冒险中, 新拉一下代码跑rarity.sh或rarity.cmd即可.
 
 手动地牢冒险:

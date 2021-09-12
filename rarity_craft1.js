@@ -62,28 +62,14 @@ async function main() {
       return
     }
 
-    console.log('craft adventure')
+    console.log('- craft adventure')
     let method_sig = web3.eth.abi.encodeFunctionSignature('adventure(uint256)')
-    await method1(private_key, summoner_id, method_sig)
+    let data = method_sig + utils.add_pre_zero(summoner_id.toString(16, 'hex'))
+    await utils.sign_and_send_transaction(web3, private_key, data, utils.Rarity_craft_contract_address)
 
   } else {
     console.log('bad method name')
   }
-}
-
-async function method1(private_key, int256_id, method_sig) {
-
-  let account = web3.eth.accounts.privateKeyToAccount(private_key)
-  let from_ = account.address
-  console.log('your account: ' + from_)
-  
-  let nonce = await web3.eth.getTransactionCount(from_)
-  console.log('nonce: ' + nonce)
-  
-  let data = method_sig + utils.add_pre_zero(int256_id.toString(16, 'hex')) 
-  
-  let signed_tx = utils.sign_eth_tx(private_key, nonce, from_, data, utils.Rarity_craft_contract_address)
-  utils.send_signed_transaction(web3, signed_tx)
 }
 
 main()
