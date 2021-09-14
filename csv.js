@@ -92,6 +92,37 @@ async function main() {
     contents += 'node rarity_skills.js %1 set_skills ' + token_ids[i] + '\n'
   }
   fs.writeFileSync('rarity_skills.cmd', contents)
+
+  // rarity crafting contract : approve
+  contents = ''
+  for (i in token_ids) {
+    contents += 'node rarity_crafting_approve.js $1 ' + token_ids[i] + ' 0\n'
+    contents += 'node rarity_crafting_approve.js $1 ' + token_ids[i] + ' 1\n'
+    contents += 'node rarity_crafting_approve.js $1 ' + token_ids[i] + ' 2\n'
+  }
+  fs.writeFileSync('rarity_approve.sh', contents)
+
+  contents = ''
+  for (i in token_ids) {
+    contents += 'node rarity_crafting_approve.js %1 ' + token_ids[i] + ' 0\n'
+    contents += 'node rarity_crafting_approve.js %1 ' + token_ids[i] + ' 1\n'
+    contents += 'node rarity_crafting_approve.js %1 ' + token_ids[i] + ' 2\n'
+  }
+  fs.writeFileSync('rarity_approve.cmd', contents)
+
+  // rarity crafting contract : craft
+  contents = ''
+  for (i in token_ids) {
+    contents += 'node rarity_crafting.js $1 craft ' + token_ids[i] + '\n'
+  }
+  fs.writeFileSync('rarity_crafting.sh', contents)
+
+  contents = ''
+  for (i in token_ids) {
+    contents += 'node rarity_crafting.js %1 craft ' + token_ids[i] + '\n'
+  }
+  fs.writeFileSync('rarity_crafting.cmd', contents)
+
 }
 
 main()

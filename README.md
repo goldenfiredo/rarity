@@ -157,8 +157,29 @@ C 手动领取金币:
 node rarity_craft1.js 帐号私钥 adventure token_id
 ```
 
+### Rarity Crafting合约 批量打装备(craft)
+x. (重新)运行 node csv.js 会生成 rarity_approve.cmd, rarity_approve.sh, rarity_crafting.cmd和rarity_crafting.sh脚本
+
+y. 运行脚本
+
+  ```
+  ./rarity_approve.sh 你的帐号私钥
+  ```
+
+  允许Craft合约内置的summoner transfer你的summoner的GOLD和Craft. 这一步是必须, 否则下一步打装备交易会被reverted. 每个summoner只做成功一次即可.
+
+  Windows下运行脚本命令不单独写了, 参考上面相关内容. 
+
+z. 运行下面命令打装备
+
+  ```
+  ./rarity_crafting.sh 你的帐号私钥
+  ```
+
+  Crafting的装备有3类101种, 打每种装备要花费不同的GOLD, 每打一次要消耗250经验, 所以你的GOLD和xp不能是0, 同时你的第6项技能值也不能是0. 不满足这3个条件不会去打以节省FTM. 第6项技能值加上调整后的intelligence值再加上一个随机数(小于20)若大于装备dc值， 你才赢得装备. 你的每10个Craft会降低一个dc，dc越小你赢的概率越高. 如果你的第6项技能值加上调整后的intelligence值已经大于装备dc值则100%赢, 否则靠运气. GOOD LUCK
+
 ##### 对rarity的简评及如何下载csv文件参见文章 https://k.mirror.xyz/xZbanjDkmORXIOygvV30I28jo27bSsV-g66DrYlr8iY. 感谢E酱～
 
 ##### rarity交易市场 https://www.raritysea.io/
 
-Follow me @ https://twitter.com/goldenfiredo
+Follow me @ https://twitter.com/goldenfiredo. issue里面只报bug不答疑(比如改哪里调整gas), 有问题加我twitter, 尽量及时回复.
