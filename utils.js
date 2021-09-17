@@ -80,7 +80,7 @@ function send_signed_transaction(web3, signed_tx) {
 		//});
 		tran.on('error', (err)=>{
 			console.log(err)
-			return
+			process.exit(1)
 		});
 	} 
 	catch (err)

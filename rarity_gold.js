@@ -2,8 +2,10 @@ const Web3 = require('web3')
 const utils = require('./utils')
 
 const web3 = new Web3(new Web3.providers.HttpProvider(utils.fantom_rpc), null, utils.options)
-const abi = require('./abi/rg_abi.json')
-const contract = new web3.eth.Contract(abi, utils.Rarity_gold_contract_address)
+const rg_abi = require('./abi/rg_abi.json')
+const abi = require('./abi/abi.json')
+const contract = new web3.eth.Contract(rg_abi, utils.Rarity_gold_contract_address)
+const rarity_contract = new web3.eth.Contract(abi, utils.Rarity_contract_address)
     
 async function main() {
   
@@ -23,8 +25,14 @@ async function main() {
     console.log('\nsummoner id: ' + summoner_id)
     let result = await contract.methods.balanceOf(summoner_id).call()
     console.log('your summoner owns ' + result/1e18 + ' GOLD')
-    result = await contract.methods.claimable(summoner_id).call()
-    if (result <= 0) {
+    result = await rarity_contract.methods.summoner(summoner_id).call()
+    let level = result._level
+    result = await contract.methods.claimed(summoner_id).call()
+    let claimable = 0
+    for (let i = result + 1; i <= level; i++) {
+      claimable += wealth_by_level(i)  
+    }
+    if (claimable <= 0) {
       console.log('your summoner has no GOLD to claim')
 
       return
@@ -38,6 +46,15 @@ async function main() {
   } else {
     console.log('bad method name')
   }
+}
+
+function wealth_by_level(level) {
+  let wealth = 0
+  for (let i = 1; i < level; i++) {
+    wealth += i * 1000e18
+  }
+
+  return wealth
 }
 
 main()
