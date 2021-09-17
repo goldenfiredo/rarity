@@ -1,14 +1,14 @@
-const Web3 = require('web3')
-const utils = require('./utils')
+const { ethers } = require("ethers")
+const utils = require('./utils_new')
 const rc_utils = require('./rc_utils')
 
-const web3 = new Web3(new Web3.providers.HttpProvider(utils.fantom_rpc), null, utils.options)
+const provider = new ethers.providers.JsonRpcProvider(utils.fantom_rpc)
 const rc_abi = require('./abi/rc_abi.json')
 const rarity_abi = require('./abi/abi.json')
 const ra_abi = require('./abi/ra_abi.json')
-const contract = new web3.eth.Contract(rc_abi, utils.Rarity_craft_contract_address)
-const rarity_contract = new web3.eth.Contract(rarity_abi, utils.Rarity_contract_address)
-const rarity_attribute_contract = new web3.eth.Contract(ra_abi, utils.Rarity_attribute_contract_address)
+const contract = new ethers.Contract(utils.Rarity_craft_contract_address, rc_abi, provider)
+const rarity_contract = new ethers.Contract(utils.Rarity_contract_address, rarity_abi, provider)
+const rarity_attribute_contract = new ethers.Contract(utils.Rarity_attribute_contract_address, ra_abi, provider)
 
 async function main() {
   
@@ -26,14 +26,14 @@ async function main() {
   if (process.argv[3] == 'adventure') {
     let summoner_id = parseInt(process.argv[4])
     console.log('\nsummoner id: ' + summoner_id)
-    let result = await rarity_contract.methods.summoner(summoner_id).call()
+    let result = await rarity_contract.summoner(summoner_id)
     let _class = parseInt(result._class)
     let level = parseInt(result._level)
     
-    result = await contract.methods.balanceOf(summoner_id).call()
+    result = await contract.balanceOf(summoner_id)
     console.log('your summoner\'s attack bonus : ' + result + ' Craft')
 
-    result = await rarity_attribute_contract.methods.ability_scores(summoner_id).call()
+    result = await rarity_attribute_contract.ability_scores(summoner_id)
     let strength = parseInt(result.strength)
     let dexterity = parseInt(result.dexterity)
     let constitution = parseInt(result.constitution)
@@ -54,7 +54,7 @@ async function main() {
       return 
     }
     
-    result = await contract.methods.adventurers_log(summoner_id).call()
+    result = await contract.adventurers_log(summoner_id)
     let start_date = new Date().getTime()
     console.log(new Date(start_date).toLocaleDateString() + ' ' + new Date(start_date).toLocaleTimeString())
     if (Math.floor(start_date / 1000) < result) {
@@ -63,9 +63,9 @@ async function main() {
     }
 
     console.log('- craft adventure')
-    let method_sig = web3.eth.abi.encodeFunctionSignature('adventure(uint256)')
-    let data = method_sig + utils.add_pre_zero(summoner_id.toString(16, 'hex'))
-    await utils.sign_and_send_transaction(web3, private_key, data, utils.Rarity_craft_contract_address)
+    let iface = new ethers.utils.Interface(rc_abi)
+    let data = iface.encodeFunctionData('adventure', [summoner_id])
+    await utils.sign_and_send_transaction(provider, private_key, data, utils.Rarity_craft_contract_address)
 
   } else {
     console.log('bad method name')

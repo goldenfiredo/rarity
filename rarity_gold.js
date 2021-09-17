@@ -1,11 +1,11 @@
-const Web3 = require('web3')
-const utils = require('./utils')
+const { ethers } = require("ethers")
+const utils = require('./utils_new')
 
-const web3 = new Web3(new Web3.providers.HttpProvider(utils.fantom_rpc), null, utils.options)
+const provider = new ethers.providers.JsonRpcProvider(utils.fantom_rpc)
 const rg_abi = require('./abi/rg_abi.json')
 const abi = require('./abi/abi.json')
-const contract = new web3.eth.Contract(rg_abi, utils.Rarity_gold_contract_address)
-const rarity_contract = new web3.eth.Contract(abi, utils.Rarity_contract_address)
+const contract = new ethers.Contract(utils.Rarity_gold_contract_address, rg_abi, provider)
+const rarity_contract = new ethers.Contract(utils.Rarity_contract_address, abi, provider)
     
 async function main() {
   
@@ -23,11 +23,11 @@ async function main() {
   if (process.argv[3] == 'claim') {
     let summoner_id = parseInt(process.argv[4])
     console.log('\nsummoner id: ' + summoner_id)
-    let result = await contract.methods.balanceOf(summoner_id).call()
+    let result = await contract.balanceOf(summoner_id)
     console.log('your summoner owns ' + result/1e18 + ' GOLD')
-    result = await rarity_contract.methods.summoner(summoner_id).call()
+    result = await rarity_contract.summoner(summoner_id)
     let level = result._level
-    result = await contract.methods.claimed(summoner_id).call()
+    result = await contract.claimed(summoner_id)
     let claimable = 0
     for (let i = result + 1; i <= level; i++) {
       claimable += wealth_by_level(i)  
@@ -39,9 +39,9 @@ async function main() {
     } 
     
     console.log('- claim GOLD')
-    let method_sig = web3.eth.abi.encodeFunctionSignature('claim(uint256)')
-    let data = method_sig + utils.add_pre_zero(summoner_id.toString(16, 'hex'))
-    await utils.sign_and_send_transaction(web3, private_key, data, utils.Rarity_gold_contract_address)
+    let iface = new ethers.utils.Interface(rg_abi)
+    let data = iface.encodeFunctionData('claim', [summoner_id]) 
+    await utils.sign_and_send_transaction(provider, private_key, data, utils.Rarity_gold_contract_address)
 
   } else {
     console.log('bad method name')

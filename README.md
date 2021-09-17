@@ -2,6 +2,8 @@
 
 For English README click https://github.com/goldenfiredo/rarity/blob/master/README_en.md
 
+###### [2021/09/16 23:00] 此次更新替换了依赖库，之前下载代码的需git pull之后再次运行 npm install 
+
 ##### 脚本需在nodejs v12.16.0或以上环境下跑, 先安装好 node
 
 1 复制代码到本地
@@ -154,7 +156,7 @@ C 手动领取金币:
 手动地牢冒险:
 
 ```
-node rarity_craft1.js 帐号私钥 adventure token_id
+node rarity_craft.js 帐号私钥 adventure token_id
 ```
 
 ### Rarity Crafting合约 批量打装备(craft)

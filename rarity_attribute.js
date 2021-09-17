@@ -1,12 +1,10 @@
-const Web3 = require('web3')
-const utils = require('./utils')
+const { ethers } = require("ethers")
+const utils = require('./utils_new')
 const ra_utils = require('./ra_utils')
 
-const web3 = new Web3(new Web3.providers.HttpProvider(utils.fantom_rpc), null, utils.options)
+const provider = new ethers.providers.JsonRpcProvider(utils.fantom_rpc)
 const abi = require('./abi/ra_abi.json')
-const contract = new web3.eth.Contract(abi, utils.Rarity_attribute_contract_address)
-
-const wait = ms => new Promise(resolve => setTimeout(resolve, ms))
+const contract = new ethers.Contract(utils.Rarity_attribute_contract_address, abi, provider)
     
 async function main() {
   
@@ -26,29 +24,23 @@ async function main() {
   if (process.argv[3] == 'point_buy') {
     let summoner_id = parseInt(process.argv[5])
     console.log('\nsummoner id: ' + summoner_id)
-    let result = await contract.methods.character_created(summoner_id).call()
+    let result = await contract.character_created(summoner_id)
     if (result == true) {
       console.log('The character has been created')
-      result = await contract.methods.ability_scores(summoner_id).call()
+      result = await contract.ability_scores(summoner_id)
       ra_utils.display_ability_score(result)
 
       return
     } 
     
-    let method_sig = web3.eth.abi.encodeFunctionSignature('point_buy(uint256,uint32,uint32,uint32,uint32,uint32,uint32)')
+    let iface = new ethers.utils.Interface(abi)
     console.log('- buy point')
     let available_attributes = utils.read_from_file('ra_point_buy_inputs.txt')
     if (process.argv[4] == '-r') { //random select attributes
       let attribute = available_attributes[Math.floor(Math.random() * available_attributes.length)].split(',')
       console.log('seleted attribute: ' + attribute)
-      let data = method_sig + utils.add_pre_zero(summoner_id.toString(16, 'hex')) 
-        + utils.add_pre_zero(parseInt(attribute[0]).toString(16, 'hex')) 
-        + utils.add_pre_zero(parseInt(attribute[1]).toString(16, 'hex')) 
-        + utils.add_pre_zero(parseInt(attribute[2]).toString(16, 'hex'))
-        + utils.add_pre_zero(parseInt(attribute[3]).toString(16, 'hex')) 
-        + utils.add_pre_zero(parseInt(attribute[4]).toString(16, 'hex')) 
-        + utils.add_pre_zero(parseInt(attribute[5]).toString(16, 'hex'))
-      await utils.sign_and_send_transaction(web3, private_key, data, utils.Rarity_attribute_contract_address)
+      let data = iface.encodeFunctionData('point_buy', [summoner_id, parseInt(attribute[0]), parseInt(attribute[1]), parseInt(attribute[2]), parseInt(attribute[3]), parseInt(attribute[4]), parseInt(attribute[5])])
+      await utils.sign_and_send_transaction(provider, private_key, data, utils.Rarity_attribute_contract_address)
 
     } else if (process.argv[4] == '-s') {
       let _str = process.argv[6]
@@ -63,21 +55,14 @@ async function main() {
         return
       }
 
-      let data = method_sig + utils.add_pre_zero(summoner_id.toString(16, 'hex')) 
-          + utils.add_pre_zero(parseInt(_str).toString(16, 'hex')) 
-          + utils.add_pre_zero(parseInt(_dex).toString(16, 'hex')) 
-          + utils.add_pre_zero(parseInt(_const).toString(16, 'hex'))
-          + utils.add_pre_zero(parseInt(_int).toString(16, 'hex')) 
-          + utils.add_pre_zero(parseInt(_wis).toString(16, 'hex')) 
-          + utils.add_pre_zero(parseInt(_cha).toString(16, 'hex'))
-
-      await utils.sign_and_send_transaction(web3, private_key, data, utils.Rarity_attribute_contract_address)
+      let data = iface.encodeFunctionData('point_buy', [summoner_id, parseInt(_str), parseInt(_dex), parseInt(_const), parseInt(_int), parseInt(_wis), parseInt(_cha)])
+      await utils.sign_and_send_transaction(provider, private_key, data, utils.Rarity_attribute_contract_address)
 
     } else {
       console.log('bad arguments')
     }
 
-    result = await contract.methods.tokenURI(summoner_id).call()
+    result = await contract.tokenURI(summoner_id)
     let b64 = result.slice(result.indexOf('base64,')+7)
     await utils.save_svg(b64, summoner_id + '_ra')
 
@@ -85,27 +70,5 @@ async function main() {
     console.log('bad method name')
   }
 }
-/*
-async function method1(private_key, int256_id, _str, _dex, _const, _int, _wis, _cha, method_sig) {
-
-  let account = web3.eth.accounts.privateKeyToAccount(private_key)
-  let from_ = account.address
-  console.log('your account: ' + from_)
-  
-  let nonce = await web3.eth.getTransactionCount(from_)
-  console.log('nonce: ' + nonce)
-  
-  let data = method_sig + utils.add_pre_zero(int256_id.toString(16, 'hex')) 
-      + utils.add_pre_zero(parseInt(_str).toString(16, 'hex')) 
-      + utils.add_pre_zero(parseInt(_dex).toString(16, 'hex')) 
-      + utils.add_pre_zero(parseInt(_const).toString(16, 'hex'))
-      + utils.add_pre_zero(parseInt(_int).toString(16, 'hex')) 
-      + utils.add_pre_zero(parseInt(_wis).toString(16, 'hex')) 
-      + utils.add_pre_zero(parseInt(_cha).toString(16, 'hex'))
-
-  let signed_tx = utils.sign_eth_tx(private_key, nonce, from_, data, utils.Rarity_attribute_contract_address)
-  utils.send_signed_transaction(web3, signed_tx)
-}
-*/
 
 main()

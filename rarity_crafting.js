@@ -1,21 +1,19 @@
-const Web3 = require('web3')
-const utils = require('./utils')
-const rc_utils = require('./rc_utils')
+const { ethers } = require("ethers")
+const utils = require('./utils_new')
 const rc2_utils = require('./rc2_utils')
 
-const web3 = new Web3(new Web3.providers.HttpProvider(utils.fantom_rpc), null, utils.options)
+const provider = new ethers.providers.JsonRpcProvider(utils.fantom_rpc)
 const rc2_abi = require('./abi/rc2_abi.json')
 const rc_abi = require('./abi/rc_abi.json')
 const rarity_abi = require('./abi/abi.json')
 const ra_abi = require('./abi/ra_abi.json')
 const rg_abi = require('./abi/rg_abi.json')
 const rs_abi = require('./abi/rs_abi.json')
-const contract = new web3.eth.Contract(rc2_abi, utils.Rarity_crafting_contract_address)
-const rarity_contract = new web3.eth.Contract(rarity_abi, utils.Rarity_contract_address)
-const rarity_attribute_contract = new web3.eth.Contract(ra_abi, utils.Rarity_attribute_contract_address)
-const rarity_craft_contract = new web3.eth.Contract(rc_abi, utils.Rarity_craft_contract_address)
-const rarity_gold_contract = new web3.eth.Contract(rg_abi, utils.Rarity_gold_contract_address)
-const rarity_skills_contract = new web3.eth.Contract(rs_abi, utils.Rarity_skills_contract_address)
+const rarity_contract = new ethers.Contract(utils.Rarity_contract_address, rarity_abi, provider)
+const rarity_attribute_contract = new ethers.Contract(utils.Rarity_attribute_contract_address, ra_abi, provider)
+const rarity_craft_contract = new ethers.Contract(utils.Rarity_craft_contract_address, rc_abi, provider)
+const rarity_gold_contract = new ethers.Contract(utils.Rarity_gold_contract_address, rg_abi, provider)
+const rarity_skills_contract = new ethers.Contract(utils.Rarity_skills_contract_address, rs_abi, provider)
 
 async function main() {
   
@@ -33,7 +31,7 @@ async function main() {
   if (process.argv[3] == 'craft') {
     let summoner_id = parseInt(process.argv[4])
     console.log('\nsummoner id: ' + summoner_id)
-    let result = await rarity_contract.methods.summoner(summoner_id).call()
+    let result = await rarity_contract.summoner(summoner_id)
     let _class = parseInt(result._class)
     let level = parseInt(result._level)
     let xp = parseInt(result._xp)
@@ -43,7 +41,7 @@ async function main() {
     }
     console.log('xp:', xp)
 
-    result = await rarity_attribute_contract.methods.ability_scores(summoner_id).call()
+    result = await rarity_attribute_contract.ability_scores(summoner_id)
     let intelligence = parseInt(result.intelligence)
     if (intelligence == 0) {
       console.log('you need point_buy first')
@@ -51,12 +49,12 @@ async function main() {
     }
     console.log('intelligence:', intelligence)
 
-    result = await rarity_craft_contract.methods.balanceOf(summoner_id).call()
+    result = await rarity_craft_contract.balanceOf(summoner_id)
     console.log('your summoner\'s attack bonus : ' + result + ' Craft')
     let craft = parseInt(result)
     craft = Math.floor(craft/10) * 10
 
-    let skills = await rarity_skills_contract.methods.get_skills(summoner_id).call()
+    let skills = await rarity_skills_contract.get_skills(summoner_id)
     console.log(skills)
     let skill6 = parseInt(skills[5])
 
@@ -70,7 +68,7 @@ async function main() {
       return
     }
 
-    result = await rarity_gold_contract.methods.balanceOf(summoner_id).call()
+    result = await rarity_gold_contract.balanceOf(summoner_id)
     let gold = parseInt(result)
     console.log('your summoner\'s GOLD : ' + result + ' GOLD')
     
@@ -85,14 +83,10 @@ async function main() {
     }
 
     console.log('- craft')
-    let method_sig = web3.eth.abi.encodeFunctionSignature('craft(uint256,uint8,uint8,uint256)')
-    
-    let data = method_sig + utils.add_pre_zero(summoner_id.toString(16, 'hex'))
-      + utils.add_pre_zero(base_type.toString(16, 'hex'))
-      + utils.add_pre_zero(item_type.toString(16, 'hex'))
-      + utils.add_pre_zero(craft.toString(16, 'hex'))
-    
-    await utils.sign_and_send_transaction(web3, private_key, data, utils.Rarity_crafting_contract_address)
+    let iface = new ethers.utils.Interface(rc2_abi)
+    let data = iface.encodeFunctionData('craft', [summoner_id, base_type, item_type, craft])
+
+    await utils.sign_and_send_transaction(provider, private_key, data, utils.Rarity_crafting_contract_address)
 
   } else {
     console.log('bad method name')
@@ -145,11 +139,11 @@ function match_type(skill6, intelligence, craft) {
 }
 
 async function check_approve(summoner_id) {
-  let result = await rarity_gold_contract.methods.allowance(summoner_id, rc2_utils.SUMMMONER_ID).call()
+  let result = await rarity_gold_contract.allowance(summoner_id, rc2_utils.SUMMMONER_ID)
   if (result == 0) return false
-  result = await rarity_craft_contract.methods.allowance(summoner_id, rc2_utils.SUMMMONER_ID).call()
+  result = await rarity_craft_contract.allowance(summoner_id, rc2_utils.SUMMMONER_ID)
   if (result == 0) return false
-  result = await rarity_contract.methods.getApproved(summoner_id).call()
+  result = await rarity_contract.getApproved(summoner_id)
   if (result != utils.Rarity_crafting_contract_address) return false
 
   return true

@@ -1,17 +1,15 @@
-const Web3 = require('web3')
-const utils = require('./utils')
+const { ethers } = require("ethers")
+const utils = require('./utils_new')
 const rc_utils = require('./rc_utils')
 
-const web3 = new Web3(new Web3.providers.HttpProvider(utils.fantom_rpc), null, utils.options)
+const provider = new ethers.providers.JsonRpcProvider(utils.fantom_rpc)
 const abi = require('./abi/abi.json')
 const ra_abi = require('./abi/ra_abi.json')
 const rc_abi = require('./abi/rc_abi.json')
-const contract = new web3.eth.Contract(abi, utils.Rarity_contract_address)
-const rarity_attribute_contract = new web3.eth.Contract(ra_abi, utils.Rarity_attribute_contract_address)
-const rarity_craft_contract = new web3.eth.Contract(rc_abi, utils.Rarity_craft_contract_address)
+const contract = new ethers.Contract(utils.Rarity_contract_address, abi, provider)
+const rarity_attribute_contract = new ethers.Contract(utils.Rarity_attribute_contract_address, ra_abi, provider)
+const rarity_craft_contract = new ethers.Contract(utils.Rarity_craft_contract_address, rc_abi, provider)
 
-const wait = ms => new Promise(resolve => setTimeout(resolve, ms))
-    
 async function main() {
   
   if (process.argv.length < 4) {
@@ -34,15 +32,15 @@ async function main() {
     }
 
     console.log('- summon')
-    let method_sig = web3.eth.abi.encodeFunctionSignature('summon(uint256)')
-    let data = method_sig + utils.add_pre_zero(class_id.toString(16, 'hex'))
-    await utils.sign_and_send_transaction(web3, private_key, data, utils.Rarity_contract_address)
+    let iface = new ethers.utils.Interface(abi)
+    let data = iface.encodeFunctionData('summon', [class_id])
+    await utils.sign_and_send_transaction(provider, private_key, data, utils.Rarity_contract_address)
 
   } else if (process.argv[3] == 'adventure') {
     let summoner_id = parseInt(process.argv[4])
     console.log('\n* summoner id: ' + summoner_id)
 
-    let result = await contract.methods.summoner(summoner_id).call()
+    let result = await contract.summoner(summoner_id)
     console.log(JSON.stringify(result))
     let next_adventure = result._log
     let xp = result._xp
@@ -52,33 +50,16 @@ async function main() {
       console.log('call summoner error')
       return
     }
-    result = await contract.methods.xp_required(level).call()
+    result = await contract.xp_required(level)
     if (parseInt(xp) >= parseInt(result)) {
       console.log('- level up')
-      let method_sig = web3.eth.abi.encodeFunctionSignature('level_up(uint256)')
-      let data = method_sig + utils.add_pre_zero(summoner_id.toString(16, 'hex'))
-      await utils.sign_and_send_transaction(web3, private_key, data, utils.Rarity_contract_address)
-      await wait(3000)
+      let iface = new ethers.utils.Interface(abi)
+      let data = iface.encodeFunctionData('level_up', [summoner_id])
+      await utils.sign_and_send_transaction(provider, private_key, data, utils.Rarity_contract_address)
     }
 
-    result = await rarity_attribute_contract.methods.character_created(summoner_id).call()
-    if (result == false) {
-      let method_sig = web3.eth.abi.encodeFunctionSignature('point_buy(uint256,uint32,uint32,uint32,uint32,uint32,uint32)')
-      console.log('- buy point')
-      let available_attributes = utils.read_from_file('ra_point_buy_inputs.txt')
-      let attribute = available_attributes[Math.floor(Math.random() * available_attributes.length)].split(',')
-      console.log('seleted attribute: ' + attribute)
-      let data = method_sig + utils.add_pre_zero(summoner_id.toString(16, 'hex')) 
-        + utils.add_pre_zero(parseInt(attribute[0]).toString(16, 'hex')) 
-        + utils.add_pre_zero(parseInt(attribute[1]).toString(16, 'hex')) 
-        + utils.add_pre_zero(parseInt(attribute[2]).toString(16, 'hex'))
-        + utils.add_pre_zero(parseInt(attribute[3]).toString(16, 'hex')) 
-        + utils.add_pre_zero(parseInt(attribute[4]).toString(16, 'hex')) 
-        + utils.add_pre_zero(parseInt(attribute[5]).toString(16, 'hex'))
-      await utils.sign_and_send_transaction(web3, private_key, data, utils.Rarity_attribute_contract_address)
-      await wait(5000)
-    }
-
+    await buy_point(private_key, summoner_id)
+    
     let start_date = new Date().getTime()
     console.log(new Date(start_date).toLocaleDateString() + ' ' + new Date(start_date).toLocaleTimeString())
     if (Math.floor(start_date / 1000) < next_adventure) {
@@ -86,67 +67,85 @@ async function main() {
     } else {
 
       console.log('- adventure')
-      let method_sig = web3.eth.abi.encodeFunctionSignature('adventure(uint256)')
-      let data = method_sig + utils.add_pre_zero(summoner_id.toString(16, 'hex'))
-      await utils.sign_and_send_transaction(web3, private_key, data, utils.Rarity_contract_address)
-      await wait(5000)
+      
+      let iface = new ethers.utils.Interface(abi)
+      let data = iface.encodeFunctionData('adventure', [summoner_id])
 
-      result = await contract.methods.tokenURI(summoner_id).call()
+      await utils.sign_and_send_transaction(provider, private_key, data, utils.Rarity_contract_address)
+
+      result = await contract.tokenURI(summoner_id)
       let b64 = result.slice(result.indexOf('base64,')+7)
       await utils.save_svg(b64, summoner_id)
 
-      result = await contract.methods.summoner(summoner_id).call()
+      result = await contract.summoner(summoner_id)
       xp = result._xp
       level = result._level
-      result = await contract.methods.xp_required(level).call()
+      result = await contract.xp_required(level)
       if (parseInt(xp) >= parseInt(result)) {
         console.log('- level up')
-        let method_sig = web3.eth.abi.encodeFunctionSignature('level_up(uint256)')
-        let data = method_sig + utils.add_pre_zero(summoner_id.toString(16, 'hex'))
-        await utils.sign_and_send_transaction(web3, private_key, data, utils.Rarity_contract_address)
-        await wait(5000)
+        let iface = new ethers.utils.Interface(abi)
+        let data = iface.encodeFunctionData('level_up', [summoner_id])
+        await utils.sign_and_send_transaction(provider, private_key, data, utils.Rarity_contract_address)
       }
     }
 
-    //craft
-    result = await rarity_craft_contract.methods.balanceOf(summoner_id).call()
-    console.log('\nyour summoner\'s attack bonus : ' + result + ' Craft')
-    result = await rarity_attribute_contract.methods.ability_scores(summoner_id).call()
-    let strength = parseInt(result.strength)
-    let dexterity = parseInt(result.dexterity)
-    let constitution = parseInt(result.constitution)
-    if (strength == 0) {
-      console.log('you need to create character first')
-      return
-    }
+    //craft adventure
+    await craft_adventure(private_key, summoner_id, _class, level)
     
-    console.log('health:',rc_utils.health_by_class_and_level(_class, level, constitution))
-    console.log('damage:',rc_utils.damage(strength))
-    console.log('armor class:',rc_utils.armor_class(dexterity))
-    console.log('attack bonus:',rc_utils.attack_bonus(_class, strength, level))
-
-    let rewards = rc_utils.scout(_class, level, strength, dexterity, constitution)
-    console.log('rewards:', rewards)
-    if (rewards <= 0) {
-      console.log('rewards for attacking is 0, don\'t attack dungeon')
-      return 
-    }
-    
-    result = await rarity_craft_contract.methods.adventurers_log(summoner_id).call()
-    start_date = new Date().getTime()
-    if (Math.floor(start_date / 1000) < result) {
-      console.log('wait ' + (result - Math.floor(start_date / 1000)) + ' seconds for next attack')
-      return
-    }
-
-    console.log('- craft adventure')
-    let method_sig = web3.eth.abi.encodeFunctionSignature('adventure(uint256)')
-    let data = method_sig + utils.add_pre_zero(summoner_id.toString(16, 'hex'))
-    await utils.sign_and_send_transaction(web3, private_key, data, utils.Rarity_craft_contract_address)
-    await wait(5000)
   } else {
     console.log('bad method name')
   }
+}
+
+async function buy_point(private_key, summoner_id) {
+  let result = await rarity_attribute_contract.character_created(summoner_id)
+  if (result == false) {
+    let available_attributes = utils.read_from_file('ra_point_buy_inputs.txt')
+    let attribute = available_attributes[Math.floor(Math.random() * available_attributes.length)].split(',')
+    console.log('seleted attribute: ' + attribute)
+
+    console.log('- buy point')
+    let iface = new ethers.utils.Interface(ra_abi)
+    let data = iface.encodeFunctionData('point_buy', [summoner_id, parseInt(attribute[0]), parseInt(attribute[1]), parseInt(attribute[2]), parseInt(attribute[3]), parseInt(attribute[4]), parseInt(attribute[5])])
+    await utils.sign_and_send_transaction(provider, private_key, data, utils.Rarity_attribute_contract_address)
+  }
+}
+
+async function craft_adventure(private_key, summoner_id, _class, level) {
+  let result = await rarity_craft_contract.balanceOf(summoner_id)
+  console.log('\nyour summoner\'s attack bonus : ' + result + ' Craft')
+  result = await rarity_attribute_contract.ability_scores(summoner_id)
+  let strength = parseInt(result.strength)
+  let dexterity = parseInt(result.dexterity)
+  let constitution = parseInt(result.constitution)
+  if (strength == 0) {
+    console.log('you need to create character first')
+    return
+  }
+  
+  console.log('health:',rc_utils.health_by_class_and_level(_class, level, constitution))
+  console.log('damage:',rc_utils.damage(strength))
+  console.log('armor class:',rc_utils.armor_class(dexterity))
+  console.log('attack bonus:',rc_utils.attack_bonus(_class, strength, level))
+
+  let rewards = rc_utils.scout(_class, level, strength, dexterity, constitution)
+  console.log('rewards:', rewards)
+  if (rewards <= 0) {
+    console.log('rewards for attacking is 0, don\'t attack dungeon')
+    return 
+  }
+  
+  result = await rarity_craft_contract.adventurers_log(summoner_id)
+  start_date = new Date().getTime()
+  if (Math.floor(start_date / 1000) < result) {
+    console.log('wait ' + (result - Math.floor(start_date / 1000)) + ' seconds for next attack')
+    return
+  }
+
+  console.log('- craft adventure')
+  let iface = new ethers.utils.Interface(rc_abi)
+  let data = iface.encodeFunctionData('adventure', [summoner_id])
+  await utils.sign_and_send_transaction(provider, private_key, data, utils.Rarity_craft_contract_address)
 }
 
 main()
