@@ -41,17 +41,19 @@ async function main() {
     console.log('\n* summoner id: ' + summoner_id)
 
     let result = await contract.summoner(summoner_id)
-    console.log(JSON.stringify(result))
     let next_adventure = result._log
-    let xp = result._xp
-    let level = result._level
+    let xp = parseInt(result._xp)
+    let level = parseInt(result._level)
     let _class = parseInt(result._class)
+    console.log('class:', _class)
+    console.log('level:', level)
+    console.log('xp:', xp)
     if (_class == 0) {
       console.log('call summoner error')
       return
     }
     result = await contract.xp_required(level)
-    if (parseInt(xp) >= parseInt(result)) {
+    if (xp >= parseInt(result)) {
       console.log('- level up')
       let iface = new ethers.utils.Interface(abi)
       let data = iface.encodeFunctionData('level_up', [summoner_id])

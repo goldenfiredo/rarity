@@ -44,7 +44,8 @@ function sign_eth_tx(private_key, nonce, from_, data, contract_address)
 async function send_signed_transaction(provider, signed_tx) {
   const { hash } = await provider.sendTransaction(signed_tx)
   console.log('hash:', hash)
-  await provider.waitForTransaction(hash)
+  let confirmations = 0
+  await provider.waitForTransaction(hash, confirmations)
   console.log('- done')
 }
 
