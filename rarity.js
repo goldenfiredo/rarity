@@ -47,7 +47,7 @@ async function main() {
     let _class = parseInt(result._class)
     console.log('class:', _class)
     console.log('level:', level)
-    console.log('xp:', xp)
+    console.log('xp:', xp/1e18)
     if (_class == 0) {
       console.log('call summoner error')
       return

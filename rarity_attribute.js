@@ -43,12 +43,12 @@ async function main() {
       await utils.sign_and_send_transaction(provider, private_key, data, utils.Rarity_attribute_contract_address)
 
     } else if (process.argv[4] == '-s') {
-      let _str = process.argv[6]
-      let _dex = process.argv[7]
-      let _const = process.argv[8]
-      let _int = process.argv[9]
-      let _wis = process.argv[10]
-      let _cha = process.argv[11]
+      let _str = process.argv[5]
+      let _dex = process.argv[6]
+      let _const = process.argv[7]
+      let _int = process.argv[8]
+      let _wis = process.argv[9]
+      let _cha = process.argv[10]
 
       if (!ra_utils.check_input(available_attributes, _str, _dex, _const, _int, _wis, _cha)) {
         console.log('bad attributes')
